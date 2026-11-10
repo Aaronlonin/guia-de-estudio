@@ -2,906 +2,2582 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Misión Cívica y Ética - Guía de Estudio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión Estudio: ¡Español y Ciencias!</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka & Quicksand para un toque infantil, amigable y muy legible -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
     body {
-      background: #0f172a;
-      color: #f8fafc;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 10px 30px 10px;
+      font-family: 'Quicksand', sans-serif;
     }
-
-    /* BARRA SUPERIOR DE NIVEL */
-    .level-selector-wrap {
+    h1, h2, h3, .font-fun {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    /* Estructura limpia para cambio de pestañas sin deformar layouts */
+    .tab-pane {
+      display: none !important;
       width: 100%;
-      max-width: 580px;
-      margin-bottom: 14px;
-      position: sticky;
-      top: 6px;
-      z-index: 50;
     }
-    .level-selector {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: #1e293b;
-      border: 2px solid #334155;
-      padding: 4px;
-      border-radius: 16px;
-      gap: 6px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    .tab-pane.active {
+      display: block !important;
     }
-    .lvl-btn {
-      padding: 10px 6px;
-      font-size: 13px;
-      font-weight: 800;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      background: transparent;
-      color: #94a3b8;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
+    /* Estilos 3D para la tarjeta de memoria (Flip card) */
+    .perspective-1000 {
+      perspective: 1000px;
     }
-    .lvl-btn.active-lvl1 {
-      background: #10b981;
-      color: #022c22;
-      box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
-    }
-    .lvl-btn.active-lvl2 {
-      background: #f59e0b;
-      color: #451a03;
-      box-shadow: 0 3px 10px rgba(245, 158, 11, 0.35);
-    }
-
-    /* CONTENEDOR GENERAL */
-    .app-container {
-      width: 100%;
-      max-width: 580px;
-    }
-    .card {
-      background: #1e293b;
-      border-radius: 22px;
-      border: 1px solid #334155;
-      padding: 18px 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px dashed #334155;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
-    }
-    .badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .badge-lvl1 { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-    .badge-lvl2 { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
-
-    /* SUB-MODOS (TABS INTERNOS) */
-    .sub-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-    .sub-btn {
-      flex: 1;
-      padding: 8px 4px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: 800;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #94a3b8;
-      cursor: pointer;
-    }
-    .sub-btn.active {
-      background: #334155;
-      color: #f8fafc;
-      border-color: #64748b;
-    }
-
-    /* NIVEL 1: TRIVIA */
-    .progress-bar-bg {
-      width: 100%;
-      height: 8px;
-      background: #0f172a;
-      border-radius: 999px;
-      margin-bottom: 14px;
-      overflow: hidden;
-      border: 1px solid #334155;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: #10b981;
-      width: 8%;
-      transition: width 0.3s ease;
-    }
-    .question-box {
-      background: #0f172a;
-      padding: 14px;
-      border-radius: 14px;
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.4;
-      text-align: center;
-      margin-bottom: 14px;
-      border: 1px solid #334155;
-      min-height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .option-btn {
-      width: 100%;
-      background: #0f172a;
-      border: 2px solid #334155;
-      padding: 11px 12px;
-      border-radius: 14px;
-      color: #e2e8f0;
-      font-size: 13px;
-      font-weight: 600;
-      text-align: left;
-      margin-bottom: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      transition: all 0.15s ease;
-    }
-    .option-btn:hover { border-color: #10b981; }
-    .option-btn.opt-correct { border-color: #10b981; background: rgba(16,185,129,0.2); color: #6ee7b7; font-weight: 800; }
-    .option-btn.opt-wrong { border-color: #ef4444; background: rgba(239,68,68,0.2); color: #fca5a5; }
-
-    /* RETROALIMENTACIÓN Y BOTONES ACCIÓN */
-    .feedback-box {
-      padding: 12px;
-      border-radius: 14px;
-      font-size: 13px;
-      margin-top: 10px;
-      line-height: 1.4;
-      font-weight: 600;
-    }
-    .feedback-box.good { background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #a7f3d0; }
-    .feedback-box.bad { background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #fecaca; }
-    .primary-btn {
-      width: 100%;
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 14px;
-      font-size: 14px;
-      font-weight: 900;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .btn-green { background: #10b981; color: #022c22; }
-    .btn-amber { background: #f59e0b; color: #451a03; }
-    .primary-btn:active { transform: scale(0.98); }
-
-    /* FLASHCARDS */
-    .card-flip-wrap { perspective: 1000px; width: 100%; height: 260px; margin: 10px 0; }
-    .card-inner {
-      width: 100%;
-      height: 100%;
-      position: relative;
+    .transform-style-preserve-3d {
       transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
     }
-    .card-inner.flipped { transform: rotateY(180deg); }
-    .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
+    .backface-hidden {
       backface-visibility: hidden;
-      border-radius: 18px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      -webkit-backface-visibility: hidden;
     }
-    .card-front { background: #0f172a; border: 3px solid #f59e0b; color: #f8fafc; }
-    .card-back { background: #064e3b; border: 3px solid #10b981; color: #ecfdf5; transform: rotateY(180deg); }
-
-    /* NIVEL 2: EMPAREJAR (MATCH) */
-    .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .match-col { display: flex; flex-direction: column; gap: 8px; }
-    .col-lbl { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 2px; }
-    .match-btn {
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 12px;
-      color: #f8fafc;
-      padding: 10px 8px;
-      font-size: 11.5px;
-      font-weight: 700;
-      text-align: left;
-      cursor: pointer;
-      min-height: 52px;
-      display: flex;
-      align-items: center;
-      line-height: 1.3;
+    .rotate-y-180 {
+      transform: rotateY(180deg);
     }
-    .match-btn.selected { border-color: #f59e0b; background: rgba(245, 158, 11, 0.2); color: #fde68a; }
-    .match-btn.matched { border-color: #10b981; background: rgba(16, 185, 129, 0.15); color: #6ee7b7; opacity: 0.35; pointer-events: none; }
-
-    .hidden { display: none !important; }
+    /* Animaciones suaves */
+    .bounce-hover:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+    .press-effect:active {
+      transform: scale(0.97);
+    }
+    /* Scrollbar estilizada */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
   </style>
 </head>
-<body>
+<body class="bg-amber-50 text-slate-800 min-h-screen flex flex-col select-none">
 
-  <!-- SELECTOR DE VERSIÓN (MENÚ PRINCIPAL) -->
-  <div class="level-selector-wrap">
-    <div class="level-selector">
-      <button id="lvlBtn1" class="lvl-btn active-lvl1" onclick="switchLevel(1)">
-        🌱 Modo Básico (Fácil)
-      </button>
-      <button id="lvlBtn2" class="lvl-btn" onclick="switchLevel(2)">
-        ⚡ Modo Experto (Reto)
-      </button>
+  <!-- ENCABEZADO Y CONTADOR DE ESTRELLAS -->
+  <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="bg-yellow-400 text-indigo-900 w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-md transform -rotate-3">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold tracking-wide flex items-center gap-2">
+            Super Guía de Estudio <span class="bg-yellow-300 text-slate-900 text-xs px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">100% Textual</span>
+          </h1>
+          <p class="text-xs text-indigo-100 font-medium">¡Respuestas idénticas para sacar 10!</p>
+        </div>
+      </div>
+
+      <!-- Selector de Materia Activa -->
+      <div class="flex items-center bg-indigo-950/60 p-1 rounded-2xl border border-white/20 flex-wrap gap-1">
+        <button id="subj-btn-all" onclick="setSubject('all')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all text-white/80 hover:text-white">
+          📚 Todas
+        </button>
+        <button id="subj-btn-esp" onclick="setSubject('esp')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-yellow-400 text-indigo-950 font-bold shadow">
+          📝 Español
+        </button>
+        <button id="subj-btn-mat" onclick="setSubject('mat')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all text-white/80 hover:text-white">
+          📐 Matemáticas
+        </button>
+        <button id="subj-btn-cie" onclick="setSubject('cie')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all text-white/80 hover:text-white">
+          🔬 Ciencias
+        </button>
+        <button id="subj-btn-fce" onclick="setSubject('fce')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all text-white/80 hover:text-white">
+          🤝 Formación Cívica
+        </button>
+      </div>
+
+      <!-- Marcador de Puntos y Estrellas -->
+      <div class="flex items-center gap-3 bg-white/20 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/30">
+        <div class="flex items-center gap-1.5 text-yellow-300">
+          <i class="fa-solid fa-star text-xl animate-pulse"></i>
+          <span id="star-count" class="font-bold text-lg md:text-xl text-white">0</span>
+        </div>
+        <div class="h-5 w-px bg-white/30"></div>
+        <div class="text-xs font-semibold text-indigo-100">
+          Nivel: <span id="user-rank" class="text-white font-bold">Explorador</span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <main class="app-container">
+    <!-- Pestañas de Navegación de Modos -->
+    <nav class="bg-indigo-900/40 px-4">
+      <div class="max-w-6xl mx-auto flex overflow-x-auto space-x-2 py-2 text-sm font-semibold no-scrollbar">
+        <button onclick="setTab('machete')" id="tab-btn-machete" class="tab-btn active px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all bg-yellow-400 text-indigo-950 shadow-md">
+          <i class="fa-solid fa-book-open"></i> Guía Maestra
+        </button>
+        <button onclick="setTab('flashcards')" id="tab-btn-flashcards" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all bg-white/10 hover:bg-white/20 text-white">
+          <i class="fa-solid fa-layer-group"></i> Tarjetas Flash
+        </button>
+        <button onclick="setTab('quiz')" id="tab-btn-quiz" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all bg-white/10 hover:bg-white/20 text-white">
+          <i class="fa-solid fa-list-check"></i> Simulador Examen
+        </button>
+        <button onclick="setTab('builder')" id="tab-btn-builder" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all bg-white/10 hover:bg-white/20 text-white">
+          <i class="fa-solid fa-puzzle-piece"></i> Arma la Frase
+        </button>
+        <button onclick="setTab('match')" id="tab-btn-match" class="tab-btn px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all bg-white/10 hover:bg-white/20 text-white">
+          <i class="fa-solid fa-diagram-project"></i> Unir Parejas
+        </button>
+      </div>
+    </nav>
+  </header>
 
-    <!-- =======================================================
-         VISTA NIVEL 1: BÁSICO (TRIVIA + FLASHCARDS)
-         ======================================================= -->
-    <div id="viewLevel1" class="card">
-      <div class="header-bar">
-        <span class="badge badge-lvl1">Nivel 1 • Familiarización</span>
-        <div id="quizCounters" class="text-xs font-bold text-slate-400" style="font-size:12px;">
-          ⭐ Puntos: <span id="qScore" style="color:#10b981; font-weight:900;">0</span> | <span id="qHearts">❤️❤️❤️</span>
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6">
+
+    <!-- 1. MODO: GUÍA MAESTRA / MACHETE VISUAL -->
+    <section id="section-machete" class="tab-pane active space-y-6">
+      <div class="bg-white rounded-3xl p-5 md:p-6 shadow-sm border border-amber-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="text-amber-500">📖</span> Machete Textual de Estudio
+          </h2>
+          <p class="text-sm text-slate-600 mt-1">
+            Lee, escucha y memoriza las respuestas exactas tal como vienen en la guía del colegio.
+          </p>
+        </div>
+        <!-- Botón para ocultar/mostrar respuestas -->
+        <button id="toggle-blind-btn" onclick="toggleMacheteBlind()" class="px-4 py-2.5 rounded-2xl bg-indigo-50 border-2 border-indigo-200 text-indigo-700 font-bold hover:bg-indigo-100 transition flex items-center gap-2 text-sm shadow-sm press-effect">
+          <i class="fa-solid fa-eye-slash" id="toggle-blind-icon"></i>
+          <span id="toggle-blind-text">Ocultar respuestas para practicar</span>
+        </button>
+      </div>
+
+      <!-- Buscador y Filtro de Temas -->
+      <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        <div class="flex flex-wrap gap-1.5" id="machete-filter-buttons">
+          <button onclick="filterMachete('all')" id="mf-all" class="mf-btn px-3 py-1.5 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-sm">Todos</button>
+          <button onclick="filterMachete('pub')" id="mf-pub" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">1. Anuncios y Etiquetas</button>
+          <button onclick="filterMachete('nar')" id="mf-nar" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">2. Textos Narrativos</button>
+          <button onclick="filterMachete('mat_geom')" id="mf-mat_geom" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">3. Geometría y Cuerpos</button>
+          <button onclick="filterMachete('mat_med')" id="mf-mat_med" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">4. Medidas, Peso y Capacidad</button>
+          <button onclick="filterMachete('cie_bio')" id="mf-cie_bio" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">5. Vertebrados y Locomotor</button>
+          <button onclick="filterMachete('cie_qui')" id="mf-cie_qui" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">6. Mezclas y Agua</button>
+          <button onclick="filterMachete('fce_nec')" id="mf-fce_nec" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">7. Necesidades y Derechos</button>
+          <button onclick="filterMachete('fce_bio')" id="mf-fce_bio" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">8. Biodiversidad y Cultura</button>
+        </div>
+        <!-- Buscador en tiempo real -->
+        <div class="relative max-w-xs w-full">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input 
+            type="text" 
+            id="machete-search" 
+            oninput="handleMacheteSearch(this.value)" 
+            placeholder="Buscar término o palabra..." 
+            class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+          >
         </div>
       </div>
 
-      <div class="sub-tabs">
-        <button id="subLvl1Trivia" class="sub-btn active" onclick="switchL1Tab('trivia')">🎮 Preguntas Trivia</button>
-        <button id="subLvl1Cards" class="sub-btn" onclick="switchL1Tab('cards')">🃏 Tarjetas de Repaso</button>
+      <!-- Lista de conceptos -->
+      <div id="machete-list" class="grid gap-4">
+        <!-- Renderizado dinámicamente con JS -->
       </div>
+    </section>
 
-      <!-- PANTALLA TRIVIA -->
-      <div id="tabL1Trivia">
-        <div class="progress-bar-bg">
-          <div id="progressBar" class="progress-bar-fill"></div>
+    <!-- 2. MODO: TARJETAS DE MEMORIA (FLASHCARDS) -->
+    <section id="section-flashcards" class="tab-pane">
+      <div class="max-w-xl mx-auto space-y-5">
+        <div class="w-full flex justify-between items-center text-sm font-bold text-slate-600 px-2">
+          <span class="flex items-center gap-1.5">
+            <i class="fa-solid fa-bolt text-amber-500"></i> Tarjeta <span id="fc-current-index">1</span> de <span id="fc-total">0</span>
+          </span>
+          <button onclick="shuffleFlashcards()" class="text-indigo-600 hover:text-indigo-800 text-xs flex items-center gap-1 bg-indigo-50 px-2.5 py-1 rounded-lg">
+            <i class="fa-solid fa-shuffle"></i> Barajar
+          </button>
         </div>
 
-        <div class="question-box" id="qText">Cargando pregunta...</div>
-        <div id="qOptions"></div>
-
-        <div id="qFeedback" class="feedback-box hidden"></div>
-        <button id="qNextBtn" class="primary-btn btn-green hidden" onclick="nextQuestion()">Siguiente Pregunta ➔</button>
-
-        <div id="qFinalScreen" class="hidden" style="text-align:center; padding:18px 0;">
-          <div style="font-size:46px; margin-bottom:8px;">🏆</div>
-          <h3 style="font-size:20px; font-weight:900; color:#34d399; margin-bottom:6px;">¡Completaste el Desafío!</h3>
-          <p id="qFinalMsg" style="font-size:13px; color:#cbd5e1; margin-bottom:14px;"></p>
-          <button class="primary-btn btn-green" onclick="restartTrivia()">🔄 Jugar de Nuevo</button>
-        </div>
-      </div>
-
-      <!-- PANTALLA FLASHCARDS -->
-      <div id="tabL1Cards" class="hidden">
-        <p style="text-align:center; font-size:11px; color:#94a3b8; margin-bottom:4px;">Toca la tarjeta para voltearla y ver la respuesta</p>
-        <div class="card-flip-wrap" onclick="flipCard()">
-          <div class="card-inner" id="cardInner">
-            <div class="card-face card-front">
-              <span class="badge badge-lvl2" style="font-size:10px;">PREGUNTA</span>
-              <div style="margin:auto 0;">
-                <span id="fcIcon" style="font-size:32px; display:block; margin-bottom:6px;">🌿</span>
-                <p id="fcQuestion" style="font-size:15px; font-weight:800; line-height:1.4;"></p>
+        <!-- Tarjeta 3D Giratoria -->
+        <div class="w-full h-80 md:h-96 perspective-1000 cursor-pointer" onclick="flipCard()">
+          <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-style-preserve-3d transition-transform">
+            <!-- Cara Frontal (Pregunta / Término) -->
+            <div class="absolute w-full h-full bg-white border-4 border-indigo-200 rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-xl backface-hidden">
+              <span class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider" id="fc-topic-front">
+                Tema
+              </span>
+              <div class="my-auto">
+                <span class="text-4xl block mb-3">🤔</span>
+                <h3 id="fc-question" class="text-xl md:text-2xl font-bold text-slate-800 leading-snug">
+                  ¿Pregunta?
+                </h3>
               </div>
-              <span style="font-size:11px; color:#94a3b8;">Toca para voltear ↩️</span>
+              <p class="text-xs font-bold text-slate-400 flex items-center gap-1">
+                <i class="fa-solid fa-hand-pointer animate-bounce"></i> Toca la tarjeta para ver la respuesta exacta
+              </p>
             </div>
-            <div class="card-face card-back">
-              <span class="badge badge-lvl1" style="font-size:10px;">RESPUESTA CLAVE</span>
-              <div style="margin:auto 0; padding:0 4px;">
-                <p id="fcAnswer" style="font-size:14px; font-weight:700; line-height:1.4;"></p>
+
+            <!-- Cara Posterior (Respuesta Textual) -->
+            <div class="absolute w-full h-full bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-amber-300 rounded-3xl p-8 flex flex-col justify-between items-center text-center shadow-xl backface-hidden rotate-y-180">
+              <div class="w-full flex justify-between items-center">
+                <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                  ¡Respuesta Textual Exacta!
+                </span>
+                <button onclick="event.stopPropagation(); speakText(document.getElementById('fc-answer').innerText);" title="Escuchar pronunciación" class="text-amber-700 hover:text-amber-900 bg-white/80 p-2 rounded-xl shadow-sm">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
               </div>
-              <span style="font-size:11px; color:#a7f3d0;">Toca para volver al frente ↪️</span>
+              <div class="my-auto px-2 overflow-y-auto max-h-48">
+                <p id="fc-answer" class="text-base md:text-lg font-bold text-indigo-950 leading-relaxed">
+                  Respuesta
+                </p>
+              </div>
+              <p class="text-xs font-bold text-amber-600">
+                💡 Toca de nuevo para girar
+              </p>
             </div>
           </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-          <button class="sub-btn" style="flex:0 0 80px;" onclick="prevCard()">⬅️ Atrás</button>
-          <span id="fcCounter" style="font-size:12px; font-weight:800; color:#38bdf8;">1 / 12</span>
-          <button class="sub-btn" style="flex:0 0 80px;" onclick="nextCard()">Adelante ➡️</button>
+        <!-- Controles de la Tarjeta -->
+        <div class="w-full flex items-center justify-between gap-3 pt-2">
+          <button onclick="prevCard()" class="w-12 h-12 rounded-2xl bg-white border-2 border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-100 shadow-sm press-effect">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+
+          <div class="flex gap-2 flex-1 max-w-xs">
+            <button onclick="cardMark(false)" class="flex-1 py-3 bg-rose-100 border-2 border-rose-300 text-rose-700 font-bold rounded-2xl text-xs md:text-sm hover:bg-rose-200 transition press-effect">
+              <i class="fa-solid fa-rotate-right mr-1"></i> Repasar
+            </button>
+            <button onclick="cardMark(true)" class="flex-1 py-3 bg-emerald-500 border-b-4 border-emerald-700 text-white font-bold rounded-2xl text-xs md:text-sm hover:bg-emerald-600 transition shadow-md press-effect">
+              <i class="fa-solid fa-check mr-1"></i> ¡Me la sé!
+            </button>
+          </div>
+
+          <button onclick="nextCard()" class="w-12 h-12 rounded-2xl bg-white border-2 border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-100 shadow-sm press-effect">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
         </div>
       </div>
-    </div>
+    </section>
 
-
-    <!-- =======================================================
-         VISTA NIVEL 2: EXPERTO (MATCH + CASOS + FRASES)
-         ======================================================= -->
-    <div id="viewLevel2" class="card hidden">
-      <div class="header-bar">
-        <span class="badge badge-lvl2">Nivel 2 • Aplicación y Razonamiento</span>
-        <span id="lvl2Tracker" class="badge" style="background:#0f172a; color:#38bdf8; border:1px solid #334155;">Puntos: 0</span>
-      </div>
-
-      <div class="sub-tabs">
-        <button id="subLvl2Match" class="sub-btn active" onclick="switchL2Tab('match')">🧩 Emparejar</button>
-        <button id="subLvl2Cases" class="sub-btn" onclick="switchL2Tab('cases')">🕵️ Casos Reales</button>
-        <button id="subLvl2Fill" class="sub-btn" onclick="switchL2Tab('fill')">✏️ Completar</button>
-      </div>
-
-      <!-- 2.1 MATCHING -->
-      <div id="tabL2Match">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span id="matchGroupHeader" style="font-size:12px; font-weight:bold; color:#fde047;">Bloque A: Naturaleza</span>
-          <button class="sub-btn" style="flex:0 0 auto; padding:4px 8px; font-size:11px;" onclick="nextMatchBlock()">Cambiar Tema 🔄</button>
-        </div>
-        <p style="font-size:11px; color:#94a3b8; margin-bottom:10px;">Toca un concepto de la izquierda y luego su definición de la derecha.</p>
+    <!-- 3. MODO: SIMULADOR DE EXAMEN (OPCIÓN MÚLTIPLE) -->
+    <section id="section-quiz" class="tab-pane">
+      <div class="max-w-2xl mx-auto space-y-4">
         
-        <div class="match-grid" id="matchContainer">
-          <div class="match-col" id="colConcepts"><span class="col-lbl">Concepto</span></div>
-          <div class="match-col" id="colDefs"><span class="col-lbl">Definición</span></div>
+        <!-- Barra Superior del Modo de Juego y Selector -->
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <!-- Selector de Modo -->
+          <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl">
+            <button id="quiz-mode-survival-btn" onclick="setQuizMode('survival')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-rose-500 text-white shadow-sm flex items-center gap-1.5">
+              <span>❤️ Desafío (3 Vidas)</span>
+            </button>
+            <button id="quiz-mode-practice-btn" onclick="setQuizMode('practice')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
+              <span>🕊️ Práctica Libre</span>
+            </button>
+          </div>
+
+          <!-- Medidor de Vidas (Corazones) y Racha -->
+          <div class="flex items-center gap-4">
+            <!-- Racha de Aciertos -->
+            <div id="quiz-streak-box" class="flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200">
+              <span>🔥 Racha:</span>
+              <span id="quiz-streak-count" class="text-amber-800 text-sm">0</span>
+            </div>
+
+            <!-- Vidas (Corazones) -->
+            <div id="quiz-hearts-container" class="flex items-center gap-1 text-2xl">
+              <span id="quiz-heart-1" class="transition-transform duration-300">❤️</span>
+              <span id="quiz-heart-2" class="transition-transform duration-300">❤️</span>
+              <span id="quiz-heart-3" class="transition-transform duration-300">❤️</span>
+            </div>
+          </div>
         </div>
 
-        <div id="matchSuccessBox" class="hidden" style="text-align:center; padding:16px 0;">
-          <div style="font-size:38px; margin-bottom:6px;">🎉👏</div>
-          <h4 style="color:#6ee7b7; font-size:16px; font-weight:bold; margin-bottom:10px;">¡Completaste este bloque de parejas!</h4>
-          <button class="primary-btn btn-amber" onclick="nextMatchBlock()">Jugar Siguiente Bloque ➔</button>
+        <!-- Pantalla de Juego Activo -->
+        <div id="quiz-active-card" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+          <!-- Barra de Progreso del Quiz -->
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase" id="quiz-question-type">Examen Guía</span>
+            <span class="text-xs font-bold text-slate-500">Pregunta <span id="quiz-q-num">1</span> de <span id="quiz-total-num">10</span></span>
+          </div>
+          <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-6">
+            <div id="quiz-progress-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 10%"></div>
+          </div>
+
+          <!-- Pregunta -->
+          <h3 id="quiz-question-text" class="text-lg md:text-xl font-bold text-slate-800 mb-6">
+            Cargando pregunta...
+          </h3>
+
+          <!-- Opciones -->
+          <div id="quiz-options-container" class="space-y-3">
+            <!-- Botones de opción generados dinámicamente -->
+          </div>
+
+          <!-- Mensaje de Feedback -->
+          <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-2xl border-2 text-sm"></div>
+
+          <!-- Botón Siguiente -->
+          <div class="mt-6 flex justify-end">
+            <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-md transition press-effect flex items-center gap-2">
+              <span>Siguiente pregunta</span> <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
+
+        <!-- Pantalla de GAME OVER (3 Errores en Modo Desafío) -->
+        <div id="quiz-gameover-card" class="hidden bg-white rounded-3xl p-8 shadow-md border-4 border-rose-300 text-center space-y-5 animate-fade-in">
+          <div class="text-6xl animate-bounce">💔😵</div>
+          <div>
+            <h3 class="text-2xl md:text-3xl font-bold text-rose-600 font-fun">¡Oh no! Te quedaste sin corazones</h3>
+            <p class="text-sm text-slate-600 mt-2 max-w-md mx-auto">
+              Los maestros son muy estrictos con las respuestas textuales. ¡No te rindas! Con otro intento las aprenderás de memoria.
+            </p>
+          </div>
+
+          <div class="p-4 bg-rose-50 rounded-2xl border border-rose-200 inline-block text-left text-xs text-rose-800 max-w-sm w-full space-y-1">
+            <div class="flex justify-between">
+              <span>Preguntas respondidas:</span>
+              <span id="gameover-answered" class="font-bold">0</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Mejor racha en este intento:</span>
+              <span id="gameover-streak" class="font-bold">0 🔥</span>
+            </div>
+          </div>
+
+          <div>
+            <button onclick="initQuiz()" class="px-8 py-3.5 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-bold rounded-2xl shadow-lg border-b-4 border-red-800 transition press-effect text-base flex items-center gap-2 mx-auto">
+              <i class="fa-solid fa-rotate-right"></i> ¡Volver a Intentar! (3 Vidas)
+            </button>
+          </div>
+        </div>
+
+        <!-- Pantalla de GRAN VICTORIA -->
+        <div id="quiz-victory-card" class="hidden bg-white rounded-3xl p-8 shadow-md border-4 border-yellow-400 text-center space-y-5">
+          <div class="text-6xl animate-bounce">🏆⭐🎉</div>
+          <div>
+            <h3 class="text-2xl md:text-3xl font-bold text-indigo-950 font-fun">¡MISIÓN CUMPLIDA: 100% TEXTUAL!</h3>
+            <p class="text-sm text-slate-600 mt-2 max-w-md mx-auto">
+              ¡Completaste todo el temario de Español respondiendo con las palabras idénticas que pide el profesor!
+            </p>
+          </div>
+
+          <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 inline-block text-xs text-amber-900 max-w-sm w-full space-y-2">
+            <div class="flex justify-between text-sm">
+              <span>Aciertos totales:</span>
+              <span id="victory-score" class="font-bold text-emerald-600">0</span>
+            </div>
+            <div class="flex justify-between text-sm" id="victory-hearts-row">
+              <span>Corazones restantes:</span>
+              <span id="victory-hearts" class="font-bold">❤️❤️❤️</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span>Racha máxima:</span>
+              <span id="victory-streak" class="font-bold text-amber-700">0 🔥</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button onclick="initQuiz()" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow-md border-b-4 border-emerald-700 transition press-effect text-sm">
+              <i class="fa-solid fa-rotate-right mr-1"></i> Jugar otra vez
+            </button>
+            <button onclick="setTab('machete')" class="px-6 py-3 bg-indigo-50 border-2 border-indigo-200 hover:bg-indigo-100 text-indigo-700 font-bold rounded-2xl transition press-effect text-sm">
+              <i class="fa-solid fa-book-open mr-1"></i> Repasar Guía Maestra
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. MODO: ARMA LA FRASE (MEMORIA TEXTUAL EXACTA) -->
+    <section id="section-builder" class="tab-pane">
+      <div class="max-w-2xl mx-auto space-y-6">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-purple-200">
+          <div class="flex items-center justify-between mb-4">
+            <span class="bg-purple-100 text-purple-800 text-xs px-3 py-1 rounded-full font-bold uppercase">
+              Entrenamiento Textual al 100%
+            </span>
+            <span class="text-xs font-bold text-slate-400">Ordena los bloques en orden exacto</span>
+          </div>
+
+          <!-- Concepto -->
+          <div class="mb-4 text-center">
+            <span class="text-xs text-slate-500 font-bold block mb-1">Define exactamente el concepto:</span>
+            <h3 id="builder-term" class="text-2xl font-bold text-indigo-700">Término</h3>
+          </div>
+
+          <!-- Caja de Destino -->
+          <div class="mb-5">
+            <div class="text-xs font-bold text-slate-600 mb-2 flex justify-between">
+              <span>Tu respuesta construida:</span>
+              <button onclick="resetBuilderAnswer()" class="text-rose-500 hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> Reiniciar
+              </button>
+            </div>
+            <div id="builder-dropzone" class="min-h-[110px] p-3 rounded-2xl bg-amber-50/70 border-2 border-dashed border-amber-300 flex flex-wrap gap-2 items-start content-start">
+            </div>
+          </div>
+
+          <!-- Banco de Palabras/Fragmentos -->
+          <div>
+            <div class="text-xs font-bold text-slate-600 mb-2">Bloques de texto para ordenar:</div>
+            <div id="builder-wordbank" class="flex flex-wrap gap-2 min-h-[90px] p-3 rounded-2xl bg-slate-50 border border-slate-200">
+              <!-- Palabras desordenadas generadas con JS -->
+            </div>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-between items-center">
+            <button onclick="skipBuilder()" class="text-xs font-bold text-slate-400 hover:text-slate-600">
+              Saltar a otro concepto
+            </button>
+            <button id="builder-check-btn" onclick="checkBuilderAnswer()" class="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow-md border-b-4 border-emerald-700 transition press-effect">
+              <i class="fa-solid fa-circle-check mr-2"></i> ¡Comprobar respuesta!
+            </button>
+          </div>
+
+          <!-- Mensaje de Feedback -->
+          <div id="builder-feedback" class="hidden mt-4 p-4 rounded-2xl text-sm font-semibold"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. MODO: UNIR PAREJAS (MEMORAMA / MATCH) -->
+    <section id="section-match" class="tab-pane space-y-6">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-emerald-200 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="text-emerald-500">🔗</span> Conecta Concepto con su Definición Textual
+          </h3>
+          <p class="text-xs text-slate-600">Selecciona un concepto a la izquierda y su texto idéntico a la derecha.</p>
+        </div>
+        <button onclick="initMatchGame()" class="px-4 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 rounded-xl font-bold text-xs flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-shuffle"></i> Nuevas Parejas
+        </button>
       </div>
 
-      <!-- 2.2 CASOS REALES -->
-      <div id="tabL2Cases" class="hidden">
-        <div style="background:#0f172a; padding:12px; border-radius:14px; border:1px solid #3730a3; margin-bottom:12px;">
-          <span style="font-size:10px; font-weight:800; color:#818cf8; text-transform:uppercase; display:block; margin-bottom:4px;">Situación de examen:</span>
-          <p id="caseStory" style="font-size:13.5px; line-height:1.4; color:#f1f5f9;"></p>
-          <p id="casePrompt" style="font-size:12.5px; font-weight:800; color:#38bdf8; margin-top:8px; border-top:1px dashed #1e293b; pt:6px;"></p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Columna de Conceptos -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider px-2">Conceptos</h4>
+          <div id="match-left-column" class="space-y-2"></div>
         </div>
-        <div id="caseOptions"></div>
-        <div id="caseFeedback" class="feedback-box hidden"></div>
-        <button id="caseNextBtn" class="primary-btn btn-amber hidden" onclick="nextCase()">Siguiente Caso ➔</button>
-      </div>
-
-      <!-- 2.3 COMPLETAR PALABRA -->
-      <div id="tabL2Fill" class="hidden">
-        <div style="background:#0f172a; padding:14px; border-radius:14px; border:1px solid #334155; margin-bottom:12px; text-align:center;">
-          <p id="fillPrompt" style="font-size:14px; font-weight:700; line-height:1.5; color:#f8fafc;"></p>
+        <!-- Columna de Definiciones -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider px-2">Definiciones Textuales</h4>
+          <div id="match-right-column" class="space-y-2"></div>
         </div>
-        <p style="font-size:11px; color:#94a3b8; text-align:center; margin-bottom:8px;">Selecciona la palabra clave:</p>
-        <div id="fillWordBank" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:12px;"></div>
-        <div id="fillFeedback" class="feedback-box hidden"></div>
-        <button id="fillNextBtn" class="primary-btn btn-amber hidden" onclick="nextFill()">Siguiente Frase ➔</button>
       </div>
-    </div>
+    </section>
 
   </main>
 
+  <!-- MODAL / MENSAJE DE CELEBRACIÓN -->
+  <div id="celebration-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border-4 border-yellow-300 transform scale-95 transition-all animate-bounce">
+      <div class="text-6xl mb-3">🏆</div>
+      <h3 class="text-2xl font-bold text-slate-800 font-fun mb-2" id="modal-title">¡Increíble Trabajo!</h3>
+      <p class="text-sm text-slate-600 mb-6" id="modal-message">¡Te sabes las respuestas de memoria y al pie de la letra!</p>
+      <button onclick="closeModal()" class="w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-slate-900 font-bold rounded-2xl shadow-lg border-b-4 border-amber-600">
+        ¡Continuar Jugando! ⭐
+      </button>
+    </div>
+  </div>
+
+  <footer class="mt-auto py-4 text-center text-xs text-slate-400 font-medium">
+    Hecho con dedicación para dominar al 100% el examen de Español 📝
+  </footer>
+
+  <!-- LÓGICA Y DATOS DE LA APLICACIÓN -->
   <script>
-    // ========================================================
-    // BASE DE DATOS UNIFICADA (GUÍA DE ESTUDIO)
-    // ========================================================
-    const baseQuestions = [
+    // --- 1. BASE DE DATOS EXACTA DE LA GUÍA ESCOLAR COMPLETA ---
+    const STUDY_DATA = [
+      // ==================== MATERIA: ESPAÑOL ====================
+      // Bloque 1: Anuncios y Etiquetas
       {
-        q: "1. ¿Qué elementos conforman la biodiversidad de nuestro territorio?",
-        options: ["Carreteras y edificios de concreto", "Plantas, animales, vegetación y fauna de nuestro entorno", "Dinosaurios fósiles del desierto", "Solo las rocas y el agua"],
-        correct: 1,
-        fb: "Las plantas y animales de nuestro entorno conforman la vegetación y fauna llamada biodiversidad.",
-        ans: "Las plantas y animales de nuestro entorno (vegetación y fauna).",
-        icon: "🌿"
+        id: "pub_1",
+        subject: "esp",
+        category: "pub",
+        topic: "Anuncios Publicitarios",
+        question: "¿Qué es un anuncio publicitario?",
+        exactAnswer: "Son mensajes que se utilizan para promocionar productos o servicios.",
+        options: [
+          "Son mensajes que se utilizan para promocionar productos o servicios.",
+          "Informa sobre las características y beneficios de productos y servicios de forma honesta",
+          "Manipula mediante información falsa o exagerada."
+        ]
       },
       {
-        q: "2. ¿Qué son las especies endémicas?",
-        options: ["Animales que pueden vivir en cualquier zoológico", "Especies que solo existen en ese lugar y en ninguna otra parte del mundo", "Mascotas domésticas como perros y gatos", "Plantas que crecen solo en macetas"],
-        correct: 1,
-        fb: "Son seres vivos únicos que no habitan naturalmente en ningún otro rincón del planeta.",
-        ans: "Especies que solo existen en ese lugar y en ninguna otra parte del mundo.",
-        icon: "🦎"
+        id: "pub_2",
+        subject: "esp",
+        category: "pub",
+        topic: "Anuncios Publicitarios",
+        question: "¿Qué hace la publicidad real?",
+        exactAnswer: "Informa sobre las características y beneficios de productos y servicios de forma honesta",
+        options: [
+          "Informa sobre las características y beneficios de productos y servicios de forma honesta",
+          "Manipula mediante información falsa o exagerada.",
+          "Son mensajes que se utilizan para promocionar productos o servicios."
+        ]
       },
       {
-        q: "3. ¿Qué es un ecosistema según la guía?",
-        options: ["Sistema de seres vivos (biocenosis) y medio físico (biotopo) interactuando constantemente", "Un mapa con nombres de ciudades", "Un libro de leyendas antiguas", "Una ley para cuidar parques"],
-        correct: 0,
-        fb: "Está compuesto por los seres vivos (biocenosis) y el entorno no vivo (biotopo) conviviendo.",
-        ans: "Sistema de seres vivos (biocenosis) y medio físico no vivo (biotopo) interactuando de forma constante.",
-        icon: "🏞️"
+        id: "pub_3",
+        subject: "esp",
+        category: "pub",
+        topic: "Anuncios Publicitarios",
+        question: "¿Qué hace la publicidad engañosa?",
+        exactAnswer: "Manipula mediante información falsa o exagerada.",
+        options: [
+          "Informa sobre las características y beneficios de productos y servicios de forma honesta",
+          "Manipula mediante información falsa o exagerada.",
+          "Son mensajes que se utilizan para promocionar productos o servicios."
+        ]
       },
       {
-        q: "4. ¿Qué son las regiones naturales?",
-        options: ["Fábricas de comida procesada", "Zonas con amplia variedad de paisajes, relieves, climas, suelos, flora y fauna", "Canchas deportivas de pasto", "Capitales de los estados"],
-        correct: 1,
-        fb: "Son zonas con climas, suelos, relieves y vegetación específicos.",
-        ans: "Variedad de paisajes, relieves, climas, tipos de suelo y especies animales y vegetales.",
-        icon: "🏔️"
+        id: "pub_4",
+        subject: "esp",
+        category: "pub",
+        topic: "Anuncios Publicitarios",
+        question: "¿Dónde podemos encontrar anuncios publicitarios?",
+        exactAnswer: "Pueden ser impresos (En carteles, revistas o periódicos) o audiovisuales (en radio, televisión o internet) y todos cuentan con características esenciales.",
+        options: [
+          "Informa sobre las características y beneficios de productos y servicios de forma honesta",
+          "Pueden ser impresos (En carteles, revistas o periódicos) o audiovisuales (en radio, televisión o internet) y todos cuentan con características esenciales.",
+          "Son mensajes que se utilizan para promocionar productos o servicios."
+        ]
       },
       {
-        q: "5. ¿Por qué México tiene megadiversidad?",
-        options: ["Porque tiene muchas plazas comerciales", "Porque cuenta con desiertos, selvas, bosques, ríos, mares y abundante fauna", "Porque todos los días llueve", "Porque sus ciudades son enormes"],
-        correct: 1,
-        fb: "México es megadiverso gracias a su riqueza de selvas, bosques templados, mares y ríos.",
-        ans: "Gran variedad de ecosistemas (bosques, desiertos, ríos, mares) y miles de especies.",
-        icon: "🇲🇽"
+        id: "pub_elem_1",
+        subject: "esp",
+        category: "pub",
+        topic: "Elementos de Anuncios",
+        question: "Eslogan o lema",
+        exactAnswer: "Es una frase corta y llamativa que resume la idea principal del anuncio.",
+        options: [
+          "Es una frase corta y llamativa que resume la idea principal del anuncio.",
+          "Información o mensaje sobre el producto o servicio",
+          "Es el símbolo gráfico que identifica a la marca"
+        ]
       },
       {
-        q: "6. ¿Qué es el patrimonio biocultural?",
-        options: ["Conocimientos, cultura y prácticas de los pueblos originarios", "Dinero guardado para plantar árboles", "Juguetes hechos de plástico", "Películas de superhéroes"],
-        correct: 0,
-        fb: "Es la sabiduría y costumbres ancestrales que los pueblos originarios tienen de su naturaleza.",
-        ans: "Son los conocimientos, cultura y prácticas de los pueblos originarios.",
-        icon: "🏺"
+        id: "pub_elem_2",
+        subject: "esp",
+        category: "pub",
+        topic: "Elementos de Anuncios",
+        question: "Texto o narración",
+        exactAnswer: "Información o mensaje sobre el producto o servicio",
+        options: [
+          "Información o mensaje sobre el producto o servicio",
+          "Es el símbolo gráfico que identifica a la marca",
+          "Instrucción para que el espectador haga algo."
+        ]
       },
       {
-        q: "7. ¿Qué aspectos se han promovido con la interacción de los ecosistemas?",
-        options: ["El tráfico vehicular y la basura", "El desarrollo de actividades económicas y diversas manifestaciones culturales", "Las compras por internet", "Los torneos deportivos"],
-        correct: 1,
-        fb: "Promueve actividades económicas para transformar el entorno y manifestaciones culturales ricas.",
-        ans: "1) Actividades económicas. 2) Diversas manifestaciones culturales.",
-        icon: "🌾"
+        id: "pub_elem_3",
+        subject: "esp",
+        category: "pub",
+        topic: "Elementos de Anuncios",
+        question: "Logotipo",
+        exactAnswer: "Es el símbolo gráfico que identifica a la marca",
+        options: [
+          "Es el símbolo gráfico que identifica a la marca",
+          "Es una frase corta y llamativa que resume la idea principal del anuncio.",
+          "Es el elemento visual o audiovisual (fotografía o ilustración o secuencia de imágenes y sonidos del producto)"
+        ]
       },
       {
-        q: "8. ¿Qué es un conflicto?",
-        options: ["Un desacuerdo entre dos o más personas", "Una fiesta escolar", "Un juego de patio", "Un examen difícil"],
-        correct: 0,
-        fb: "Un conflicto es simplemente un desacuerdo o diferencia de intereses entre personas.",
-        ans: "Un desacuerdo entre dos o más personas.",
-        icon: "👥"
+        id: "pub_elem_4",
+        subject: "esp",
+        category: "pub",
+        topic: "Elementos de Anuncios",
+        question: "Imagen referencial",
+        exactAnswer: "Es el elemento visual o audiovisual (fotografía o ilustración o secuencia de imágenes y sonidos del producto)",
+        options: [
+          "Es el elemento visual o audiovisual (fotografía o ilustración o secuencia de imágenes y sonidos del producto)",
+          "Instrucción para que el espectador haga algo.",
+          "Es una frase corta y llamativa que resume la idea principal del anuncio."
+        ]
       },
       {
-        q: "9. ¿Qué es el diálogo?",
-        options: ["Gritar para tener la razón", "Conversación entre dos personas para escucharse y solucionar diferencias", "Quedarse callado siempre", "Un dibujo con flechas"],
-        correct: 1,
-        fb: "El diálogo es comunicarse de forma respetuosa para llegar a acuerdos pacíficos.",
-        ans: "Una conversación entre dos o más personas para comunicarse y acordar.",
-        icon: "🗣️"
+        id: "pub_elem_5",
+        subject: "esp",
+        category: "pub",
+        topic: "Elementos de Anuncios",
+        question: "Llamada a la acción",
+        exactAnswer: "Instrucción para que el espectador haga algo.",
+        options: [
+          "Instrucción para que el espectador haga algo.",
+          "Información o mensaje sobre el producto o servicio",
+          "Es el símbolo gráfico que identifica a la marca"
+        ]
       },
       {
-        q: "10. ¿Cómo nace o surge un conflicto?",
-        options: ["Cuando las personas no están de acuerdo o no logran llegar a un acuerdo", "Cuando comparten sus juguetes amablemente", "Cuando suena el timbre del recreo", "Cuando todos opinan lo mismo"],
-        correct: 0,
-        fb: "Surge cuando las personas tienen desacuerdos y no han buscado una solución común.",
-        ans: "Cuando las personas no están de acuerdo o no logran ponerse de acuerdo.",
-        icon: "⚡"
+        id: "etq_1",
+        subject: "esp",
+        category: "pub",
+        topic: "Etiquetas de Comida",
+        question: "¿Cuál es la función de una etiqueta en un producto de comida?",
+        exactAnswer: "El etiquetado de alimentos proporciona información donde se detallan ingredientes, causantes de alergias, contenido nutricional y porciones.",
+        options: [
+          "El etiquetado de alimentos proporciona información donde se detallan ingredientes, causantes de alergias, contenido nutricional y porciones.",
+          "Pueden ser impresos (En carteles, revistas o periódicos) o audiovisuales (en radio, televisión o internet) y todos cuentan con características esenciales.",
+          "Son mensajes que se utilizan para promocionar productos o servicios."
+        ]
       },
       {
-        q: "11. ¿Cuáles son acciones que promueven la paz?",
-        options: ["Ser educados, amables y ayudar a los demás", "Empujar y no prestar útiles", "Burlarse de los compañeros", "Ignorar a quien necesita ayuda"],
-        correct: 0,
-        fb: "La cortesía, la amabilidad y el apoyo mutuo son pilares para construir paz.",
-        ans: "Ser educados, amables y ayudar a los demás.",
-        icon: "🕊️"
+        id: "etq_elems",
+        subject: "esp",
+        category: "pub",
+        topic: "Etiquetas de Comida",
+        question: "¿Cuáles son los 6 elementos que debe llevar la etiqueta de un producto de comida?",
+        exactAnswer: "1. Nombre del producto, 2. El contenido total y por porción, 3. El fabricante y país de origen, 4. La fecha de caducidad, 5. Condiciones de conservación, 6. Sellos de calidad",
+        options: [
+          "1. Nombre del producto, 2. El contenido total y por porción, 3. El fabricante y país de origen, 4. La fecha de caducidad, 5. Condiciones de conservación, 6. Sellos de calidad",
+          "1. Nombre, 2. Eslogan, 3. Logotipo, 4. Precio, 5. Dibujo, 6. Oferta",
+          "1. Trama, 2. Personajes, 3. Espacio, 4. Narrador, 5. Inicio, 6. Final"
+        ]
+      },
+
+      // Bloque 2: Textos Narrativos
+      {
+        id: "nar_1",
+        subject: "esp",
+        category: "nar",
+        topic: "Textos Narrativos",
+        question: "¿Qué es un texto narrativo?",
+        exactAnswer: "Son los que cuentan una serie de acontecimientos, reales o ficticios, por medio de la voz de un narrador",
+        options: [
+          "Son los que cuentan una serie de acontecimientos, reales o ficticios, por medio de la voz de un narrador",
+          "Es un texto literario de ficción que relata una historia breve sobre un suceso transformador en la vida de un personaje.",
+          "Relata una o varias historias y tiene más personajes que pasan por distintas situaciones a lo largo de la narración"
+        ]
       },
       {
-        q: "12. ¿Qué ayuda a evitar un conflicto?",
-        options: ["Tratar bien a las personas, el respeto y la tolerancia", "Enojarse y romper las cosas", "Imponer las reglas a la fuerza", "Dejar de hablar para siempre"],
-        correct: 0,
-        fb: "Tratar a los demás con respeto sincero y practicar la tolerancia previene disputas.",
-        ans: "Tratar a las personas con respeto y tener tolerancia.",
-        icon: "🤝"
+        id: "nar_2",
+        subject: "esp",
+        category: "nar",
+        topic: "Textos Narrativos",
+        question: "¿Qué es un cuento?",
+        exactAnswer: "Es un texto literario de ficción que relata una historia breve sobre un suceso transformador en la vida de un personaje.",
+        options: [
+          "Es un texto literario de ficción que relata una historia breve sobre un suceso transformador en la vida de un personaje.",
+          "Son los que cuentan una serie de acontecimientos, reales o ficticios, por medio de la voz de un narrador",
+          "Relata una o varias historias y tiene más personajes que pasan por distintas situaciones a lo largo de la narración"
+        ]
+      },
+      {
+        id: "nar_3",
+        subject: "esp",
+        category: "nar",
+        topic: "Textos Narrativos",
+        question: "¿Qué es una novela?",
+        exactAnswer: "Relata una o varias historias y tiene más personajes que pasan por distintas situaciones a lo largo de la narración",
+        options: [
+          "Relata una o varias historias y tiene más personajes que pasan por distintas situaciones a lo largo de la narración",
+          "Son los que cuentan una serie de acontecimientos, reales o ficticios, por medio de la voz de un narrador",
+          "Es un texto literario de ficción que relata una historia breve sobre un suceso transformador en la vida de un personaje."
+        ]
+      },
+      {
+        id: "nar_4",
+        subject: "esp",
+        category: "nar",
+        topic: "Textos Narrativos",
+        question: "¿Qué es una crónica?",
+        exactAnswer: "Es un relato periodístico y narrativo que busca captar la atención del lector al contar hechos reales de manera objetiva y detallada.",
+        options: [
+          "Es un relato periodístico y narrativo que busca captar la atención del lector al contar hechos reales de manera objetiva y detallada.",
+          "Son los que cuentan una serie de acontecimientos, reales o ficticios, por medio de la voz de un narrador",
+          "Cuentan experiencias personales del autor, quien relata su vida o episodios relevantes de la misma desde su nacimiento hasta el momento en que la escribe."
+        ]
+      },
+      {
+        id: "nar_5",
+        subject: "esp",
+        category: "nar",
+        topic: "Textos Narrativos",
+        question: "¿Qué es una autobiografía?",
+        exactAnswer: "Cuentan experiencias personales del autor, quien relata su vida o episodios relevantes de la misma desde su nacimiento hasta el momento en que la escribe.",
+        options: [
+          "Cuentan experiencias personales del autor, quien relata su vida o episodios relevantes de la misma desde su nacimiento hasta el momento en que la escribe.",
+          "Es un relato periodístico y narrativo que busca captar la atención del lector al contar hechos reales de manera objetiva y detallada.",
+          "Es un texto literario de ficción que relata una historia breve sobre un suceso transformador en la vida de un personaje."
+        ]
+      },
+      {
+        id: "nar_elem_1",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Narrador",
+        exactAnswer: "Es un mediador entre el lector y la historia, pues a través de su voz y su perspectiva se cuentan las acciones de la historia.",
+        options: [
+          "Es un mediador entre el lector y la historia, pues a través de su voz y su perspectiva se cuentan las acciones de la historia.",
+          "Son las personas, animales u objetos animados, que llevan a cabo o padecen las acciones.",
+          "Se refiere al conjunto de hechos o acciones que suceden a lo largo de la historia."
+        ]
+      },
+      {
+        id: "nar_elem_2",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Personajes",
+        exactAnswer: "Son las personas, animales u objetos animados, que llevan a cabo o padecen las acciones.",
+        options: [
+          "Son las personas, animales u objetos animados, que llevan a cabo o padecen las acciones.",
+          "Es el lugar donde se desarrollan los eventos de la narración",
+          "Se refiere al periodo en el que trascurren las acciones del relato"
+        ]
+      },
+      {
+        id: "nar_elem_3",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Trama",
+        exactAnswer: "Se refiere al conjunto de hechos o acciones que suceden a lo largo de la historia.",
+        options: [
+          "Se refiere al conjunto de hechos o acciones que suceden a lo largo de la historia.",
+          "Proporciona claridad al lector, crea suspenso al dosificar la información.",
+          "Es un mediador entre el lector y la historia, pues a través de su voz y su perspectiva se cuentan las acciones de la historia."
+        ]
+      },
+      {
+        id: "nar_elem_4",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Espacio",
+        exactAnswer: "Es el lugar donde se desarrollan los eventos de la narración",
+        options: [
+          "Es el lugar donde se desarrollan los eventos de la narración",
+          "Se refiere al periodo en el que trascurren las acciones del relato",
+          "Donde se resuelven los conflictos y se cierra la historia."
+        ]
+      },
+      {
+        id: "nar_elem_5",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Tiempo interno",
+        exactAnswer: "Se refiere al periodo en el que trascurren las acciones del relato",
+        options: [
+          "Se refiere al periodo en el que trascurren las acciones del relato",
+          "Es el lugar donde se desarrollan los eventos de la narración",
+          "Se da a conocer los personajes, el escenario y el contexto en el que se desarrolla la historia"
+        ]
+      },
+      {
+        id: "nar_elem_6",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Estructura del texto",
+        exactAnswer: "Proporciona claridad al lector, crea suspenso al dosificar la información.",
+        options: [
+          "Proporciona claridad al lector, crea suspenso al dosificar la información.",
+          "Es la parte donde ocurren los eventos principales",
+          "Se refiere al conjunto de hechos o acciones que suceden a lo largo de la historia."
+        ]
+      },
+      {
+        id: "nar_elem_7",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Inicio",
+        exactAnswer: "Se da a conocer los personajes, el escenario y el contexto en el que se desarrolla la historia",
+        options: [
+          "Se da a conocer los personajes, el escenario y el contexto en el que se desarrolla la historia",
+          "Es la parte donde ocurren los eventos principales",
+          "Donde se resuelven los conflictos y se cierra la historia."
+        ]
+      },
+      {
+        id: "nar_elem_8",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Desarrollo o nudo",
+        exactAnswer: "Es la parte donde ocurren los eventos principales",
+        options: [
+          "Es la parte donde ocurren los eventos principales",
+          "Se da a conocer los personajes, el escenario y el contexto en el que se desarrolla la historia",
+          "Donde se resuelven los conflictos y se cierra la historia."
+        ]
+      },
+      {
+        id: "nar_elem_9",
+        subject: "esp",
+        category: "nar",
+        topic: "Elementos de la Narración",
+        question: "Final o desenlace",
+        exactAnswer: "Donde se resuelven los conflictos y se cierra la historia.",
+        options: [
+          "Donde se resuelven los conflictos y se cierra la historia.",
+          "Es la parte donde ocurren los eventos principales",
+          "Es un mediador entre el lector y la historia, pues a través de su voz y su perspectiva se cuentan las acciones de la historia."
+        ]
+      },
+
+      // ==================== MATERIA: MATEMÁTICAS ====================
+      // Bloque 3: Geometría y Cuerpos
+      {
+        id: "mat_geom_1",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Cuerpos y Figuras",
+        question: "Triángulo",
+        exactAnswer: "Tiene tres lados, tres vértices y sus ejes de simetría dependen de su tipo (puede tener tres, uno o ninguno).",
+        options: [
+          "Tiene tres lados, tres vértices y sus ejes de simetría dependen de su tipo (puede tener tres, uno o ninguno).",
+          "Tiene cuatro lados iguales, cuatro vértices y cuatro ejes de simetría.",
+          "Tiene dos pares de lados iguales, cuatro vértices y dos ejes de simetría."
+        ]
+      },
+      {
+        id: "mat_geom_2",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Cuerpos y Figuras",
+        question: "cuadrado",
+        exactAnswer: "Tiene cuatro lados iguales, cuatro vértices y cuatro ejes de simetría.",
+        options: [
+          "Tiene cuatro lados iguales, cuatro vértices y cuatro ejes de simetría.",
+          "Tiene tres lados, tres vértices y sus ejes de simetría dependen de su tipo (puede tener tres, uno o ninguno).",
+          "se forma con una línea curva y no tiene vértices"
+        ]
+      },
+      {
+        id: "mat_geom_3",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Cuerpos y Figuras",
+        question: "Rectángulo",
+        exactAnswer: "Tiene dos pares de lados iguales, cuatro vértices y dos ejes de simetría.",
+        options: [
+          "Tiene dos pares de lados iguales, cuatro vértices y dos ejes de simetría.",
+          "Tiene cuatro lados iguales, cuatro vértices y cuatro ejes de simetría.",
+          "se forma con una línea curva y no tiene vértices"
+        ]
+      },
+      {
+        id: "mat_geom_4",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Cuerpos y Figuras",
+        question: "Círculo",
+        exactAnswer: "se forma con una línea curva y no tiene vértices",
+        options: [
+          "se forma con una línea curva y no tiene vértices",
+          "Tiene tres lados, tres vértices y sus ejes de simetría dependen de su tipo (puede tener tres, uno o ninguno).",
+          "Tiene dos pares de lados iguales, cuatro vértices y dos ejes de simetría."
+        ]
+      },
+      {
+        id: "mat_geom_5",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Dimensiones",
+        question: "¿Cuáles son las 3 dimensiones de un cuerpo geométrico?",
+        exactAnswer: "largo, ancho y altura",
+        options: [
+          "largo, ancho y altura",
+          "caras, aristas y vértices",
+          "ancho, vértice y altura."
+        ]
+      },
+      {
+        id: "mat_prism_1",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Prismas Rectangulares",
+        question: "¿Cuáles son las características del Cubo?",
+        exactAnswer: "6 caras, 12 aristas, 8 vértices",
+        options: [
+          "6 caras, 12 aristas, 8 vértices",
+          "2 caras cuadradas y 4 rectangulares, 12 aristas, 8 vértices",
+          "6 caras rectangulares, 12 aristas, 8 vértices"
+        ]
+      },
+      {
+        id: "mat_prism_2",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Prismas Rectangulares",
+        question: "¿Cuáles son las características del Prisma rectangular?",
+        exactAnswer: "2 caras cuadradas y 4 rectangulares, 12 aristas, 8 vértices",
+        options: [
+          "2 caras cuadradas y 4 rectangulares, 12 aristas, 8 vértices",
+          "6 caras, 12 aristas, 8 vértices",
+          "6 caras rectangulares, 12 aristas, 8 vértices"
+        ]
+      },
+      {
+        id: "mat_prism_3",
+        subject: "mat",
+        category: "mat_geom",
+        topic: "Prismas Rectangulares",
+        question: "¿Cuáles son las características del Prisma cuadrangular?",
+        exactAnswer: "6 caras rectangulares, 12 aristas, 8 vértices",
+        options: [
+          "6 caras rectangulares, 12 aristas, 8 vértices",
+          "6 caras, 12 aristas, 8 vértices",
+          "2 caras cuadradas y 4 rectangulares, 12 aristas, 8 vértices"
+        ]
+      },
+
+      // Bloque 4: Medidas, Peso y Capacidad
+      {
+        id: "mat_med_1",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Unidades de Medida",
+        question: "¿Qué símbolo representa el Metro y qué puedes medir con él?",
+        exactAnswer: "Símbolo: M | Que puedes medir: Una cancha de futbol",
+        options: [
+          "Símbolo: M | Que puedes medir: Una cancha de futbol",
+          "Símbolo: CM | Que puedes medir: Cosas pequeñas como el ancho de un teléfono",
+          "Símbolo: DM | Que puedes medir: Puede servirte para medir el ancho de un libro"
+        ]
+      },
+      {
+        id: "mat_med_2",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Unidades de Medida",
+        question: "¿Qué símbolo representa el Centímetro y qué puedes medir con él?",
+        exactAnswer: "Símbolo: CM | Que puedes medir: Cosas pequeñas como el ancho de un teléfono",
+        options: [
+          "Símbolo: CM | Que puedes medir: Cosas pequeñas como el ancho de un teléfono",
+          "Símbolo: M | Que puedes medir: Una cancha de futbol",
+          "Símbolo: DM | Que puedes medir: Puede servirte para medir el ancho de un libro"
+        ]
+      },
+      {
+        id: "mat_med_3",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Unidades de Medida",
+        question: "¿Qué símbolo representa el Decímetro y qué puedes medir con él?",
+        exactAnswer: "Símbolo: DM | Que puedes medir: Puede servirte para medir el ancho de un libro",
+        options: [
+          "Símbolo: DM | Que puedes medir: Puede servirte para medir el ancho de un libro",
+          "Símbolo: CM | Que puedes medir: Cosas pequeñas como el ancho de un teléfono",
+          "Símbolo: M | Que puedes medir: Una cancha de futbol"
+        ]
+      },
+      {
+        id: "mat_peso_1",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Peso y Masa",
+        question: "¿Cuántos gramos tiene un kilo?",
+        exactAnswer: "1000g",
+        options: [
+          "1000g",
+          "500g",
+          "250g"
+        ]
+      },
+      {
+        id: "mat_peso_2",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Peso y Masa",
+        question: "¿Cuántos gramos tiene medio kilo?",
+        exactAnswer: "500g",
+        options: [
+          "500g",
+          "1000g",
+          "250g"
+        ]
+      },
+      {
+        id: "mat_peso_3",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Peso y Masa",
+        question: "¿Cuántos gramos tiene 1 cuarto de kilo?",
+        exactAnswer: "250g",
+        options: [
+          "250g",
+          "1000g",
+          "500g"
+        ]
+      },
+      {
+        id: "mat_cap_1",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Capacidad",
+        question: "¿Qué es la Capacidad?",
+        exactAnswer: "el espacio dentro de un recipiente que podemos llenar de líquidos, como agua, jugo o leche.",
+        options: [
+          "el espacio dentro de un recipiente que podemos llenar de líquidos, como agua, jugo o leche.",
+          "Para medir la capacidad usamos una unidad de medida llamada litro",
+          "A un recipiente de un litro (1L) lo podemos llenar hasta la mitad para obtener medio litro"
+        ]
+      },
+      {
+        id: "mat_cap_2",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Capacidad",
+        question: "¿Qué unidad de medida usamos para medir la capacidad?",
+        exactAnswer: "Para medir la capacidad usamos una unidad de medida llamada litro",
+        options: [
+          "Para medir la capacidad usamos una unidad de medida llamada litro",
+          "el espacio dentro de un recipiente que podemos llenar de líquidos, como agua, jugo o leche.",
+          "A un recipiente de un litro (1L) lo podemos llenar hasta la mitad para obtener medio litro"
+        ]
+      },
+      {
+        id: "mat_cap_3",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Capacidad",
+        question: "¿Qué obtenemos si llenamos un recipiente de un litro hasta la mitad?",
+        exactAnswer: "medio litro",
+        options: [
+          "medio litro",
+          "cuarto de litro",
+          "litro"
+        ]
+      },
+      {
+        id: "mat_cap_4",
+        subject: "mat",
+        category: "mat_med",
+        topic: "Capacidad",
+        question: "¿Qué obtenemos si llenamos un recipiente de un litro hasta una cuarta parte?",
+        exactAnswer: "cuarto de litro",
+        options: [
+          "cuarto de litro",
+          "medio litro",
+          "litro"
+        ]
+      },
+
+      // ==================== MATERIA: CIENCIAS ====================
+      // Bloque 5: Vertebrados, Invertebrados y Sistema Locomotor
+      {
+        id: "cie_1",
+        subject: "cie",
+        category: "cie_bio",
+        topic: "Animales Vertebrados",
+        question: "¿Cuál es la característica principal de los animales vertebrados?",
+        exactAnswer: "Tienen un esqueleto interno formado por huesos, con un eje llamado columna vertebral.",
+        options: [
+          "Tienen un esqueleto interno formado por huesos, con un eje llamado columna vertebral.",
+          "Los animales carecen de esqueleto interno.",
+          "Un par de ojos, dos orejas, nariz, boca, dientes y cabeza"
+        ]
+      },
+      {
+        id: "cie_2",
+        subject: "cie",
+        category: "cie_bio",
+        topic: "Animales Invertebrados",
+        question: "¿Cuál es la característica principal de los animales invertebrados?",
+        exactAnswer: "Los animales carecen de esqueleto interno.",
+        options: [
+          "Tienen un esqueleto interno formado por huesos, con un eje llamado columna vertebral.",
+          "Los animales carecen de esqueleto interno.",
+          "Un par de ojos, dos orejas, nariz, boca, dientes y cabeza."
+        ]
+      },
+      {
+        id: "cie_vert_caract",
+        subject: "cie",
+        category: "cie_bio",
+        topic: "Características de Vertebrados",
+        question: "¿Cuáles son las 3 características de los vertebrados?",
+        exactAnswer: "Tiene columna vertebral, Su cuerpo se divide en 3 partes, El tronco se divide en tórax y abdomen",
+        options: [
+          "Tiene columna vertebral, Su cuerpo se divide en 3 partes, El tronco se divide en tórax y abdomen",
+          "No tiene columna vertebral, Por lo general son mas pequeños, La mayoría tiene una protección externa como una armadura",
+          "Forman el esqueleto, Ayuda a mover los huesos, Es donde se unen dos o más huesos"
+        ]
+      },
+      {
+        id: "cie_invert_caract",
+        subject: "cie",
+        category: "cie_bio",
+        topic: "Características de Invertebrados",
+        question: "¿Cuáles son las 3 características de los invertebrados?",
+        exactAnswer: "No tiene columna vertebral, Por lo general son mas pequeños, La mayoría tiene una protección externa como una armadura",
+        options: [
+          "No tiene columna vertebral, Por lo general son mas pequeños, La mayoría tiene una protección externa como una armadura",
+          "Tiene columna vertebral, Su cuerpo se divide en 3 partes, El tronco se divide en tórax y abdomen",
+          "La sustancia que se disuelve, Es la capacidad de disolverse, El líquido donde se disuelve"
+        ]
+      },
+      {
+        id: "cie_loco_1",
+        subject: "cie",
+        category: "cie_bio",
+        topic: "Sistema Locomotor",
+        question: "Huesos",
+        exactAnswer: "Forman el esqueleto",
+        options: [
+          "Forman el esqueleto",
+          "Ayuda a mover los huesos",
+          "Es donde se unen dos o más huesos"
+        ]
+      },
+      {
+        id: "cie_loco_2",
+        subject: "cie",
+        category: "cie_bio",
+        topic: "Sistema Locomotor",
+        question: "Músculos",
+        exactAnswer: "Ayuda a mover los huesos",
+        options: [
+          "Ayuda a mover los huesos",
+          "Forman el esqueleto",
+          "Es donde se unen dos o más huesos"
+        ]
+      },
+      {
+        id: "cie_loco_3",
+        subject: "cie",
+        category: "cie_bio",
+        topic: "Sistema Locomotor",
+        question: "Articulaciones",
+        exactAnswer: "Es donde se unen dos o más huesos",
+        options: [
+          "Es donde se unen dos o más huesos",
+          "Forman el esqueleto",
+          "Ayuda a mover los huesos"
+        ]
+      },
+
+      // Bloque 6: Solubilidad, Mezclas y el Agua
+      {
+        id: "cie_sol_1",
+        subject: "cie",
+        category: "cie_qui",
+        topic: "Propiedades del Agua",
+        question: "¿Qué es la solubilidad?",
+        exactAnswer: "Es la capacidad de un material para disolverse en un líquido.",
+        options: [
+          "Es la capacidad de un material para disolverse en un líquido.",
+          "La sustancia que se disuelve.",
+          "El líquido donde se disuelve el soluto."
+        ]
+      },
+      {
+        id: "cie_sol_2",
+        subject: "cie",
+        category: "cie_qui",
+        topic: "Propiedades del Agua",
+        question: "¿Qué es un soluto?",
+        exactAnswer: "La sustancia que se disuelve.",
+        options: [
+          "La sustancia que se disuelve.",
+          "Es la capacidad de un material para disolverse en un líquido.",
+          "El líquido donde se disuelve el soluto."
+        ]
+      },
+      {
+        id: "cie_sol_3",
+        subject: "cie",
+        category: "cie_qui",
+        topic: "Propiedades del Agua",
+        question: "¿Qué es un disolvente?",
+        exactAnswer: "El líquido donde se disuelve el soluto.",
+        options: [
+          "El líquido donde se disuelve el soluto.",
+          "La sustancia que se disuelve.",
+          "Es la capacidad de un material para disolverse en un líquido."
+        ]
+      },
+      {
+        id: "cie_sol_4",
+        subject: "cie",
+        category: "cie_qui",
+        topic: "Propiedades del Agua",
+        question: "¿Cuáles son las 3 formas del agua?",
+        exactAnswer: "Vapor, hielo y líquido.",
+        options: [
+          "Vapor, hielo y líquido.",
+          "Solubilidad, soluto y disolvente.",
+          "Café, humo, cubito."
+        ]
+      },
+      {
+        id: "cie_sol_5",
+        subject: "cie",
+        category: "cie_qui",
+        topic: "Propiedades del Agua",
+        question: "¿Cómo se llama el disolvente universal?",
+        exactAnswer: "Agua.",
+        options: [
+          "Agua.",
+          "Azúcar.",
+          "Refresco."
+        ]
+      },
+
+      // ==================== MATERIA: FORMACIÓN CÍVICA Y ÉTICA ====================
+      // Bloque 7: Necesidades y Derechos
+      {
+        id: "fce_1",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Necesidades Básicas",
+        question: "¿Qué es una necesidad básica?",
+        exactAnswer: "todas las cosas que necesitamos para sobrevivir y desarrollarnos.",
+        options: [
+          "todas las cosas que necesitamos para sobrevivir y desarrollarnos.",
+          "tener una consola de videojuegos.",
+          "tener agua y comida."
+        ]
+      },
+      {
+        id: "fce_nec_1",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Necesidades Básicas de una Persona",
+        question: "Fisiológicas y físicas",
+        exactAnswer: "Se relacionan con las funciones de nuestro cuerpo, como comer, hidratarse, respirar y dormir.",
+        options: [
+          "Se relacionan con las funciones de nuestro cuerpo, como comer, hidratarse, respirar y dormir.",
+          "Nos ayudan a sentirnos bien, como seres valorados o aceptados.",
+          "Se refieren a formar vínculos, como tener amigos y conocer a otras personas."
+        ]
+      },
+      {
+        id: "fce_nec_2",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Necesidades Básicas de una Persona",
+        question: "Emocionales",
+        exactAnswer: "Nos ayudan a sentirnos bien, como seres valorados o aceptados.",
+        options: [
+          "Nos ayudan a sentirnos bien, como seres valorados o aceptados.",
+          "Se relacionan con las funciones de nuestro cuerpo, como comer, hidratarse, respirar y dormir.",
+          "Nos protegen y mantienen a salvo, como tener una casa, salud y recibir un trato digno."
+        ]
+      },
+      {
+        id: "fce_nec_3",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Necesidades Básicas de una Persona",
+        question: "Sociales",
+        exactAnswer: "Se refieren a formar vínculos, como tener amigos y conocer a otras personas.",
+        options: [
+          "Se refieren a formar vínculos, como tener amigos y conocer a otras personas.",
+          "Nos ayudan a sentirnos bien, como seres valorados o aceptados.",
+          "Nos protegen y mantienen a salvo, como tener una casa, salud y recibir un trato digno."
+        ]
+      },
+      {
+        id: "fce_nec_4",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Necesidades Básicas de una Persona",
+        question: "De seguridad",
+        exactAnswer: "Nos protegen y mantienen a salvo, como tener una casa, salud y recibir un trato digno.",
+        options: [
+          "Nos protegen y mantienen a salvo, como tener una casa, salud y recibir un trato digno.",
+          "Se relacionan con las funciones de nuestro cuerpo, como comer, hidratarse, respirar y dormir.",
+          "Se refieren a formar vínculos, como tener amigos y conocer a otras personas."
+        ]
+      },
+      {
+        id: "fce_2",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Desigualdad",
+        question: "¿Que es una desigualdad?",
+        exactAnswer: "Se produce cuando el acceso a oportunidades, recursos y servicios no son los mismos para todas las personas de una población.",
+        options: [
+          "Se produce cuando el acceso a oportunidades, recursos y servicios no son los mismos para todas las personas de una población.",
+          "todas las cosas que necesitamos para sobrevivir y desarrollarnos.",
+          "Los gobiernos y autoridades deben procurar que se respeten los derechos"
+        ]
+      },
+      {
+        id: "fce_cond_1",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Condiciones para Necesidades Básicas",
+        question: "¿Qué condición representa: 'Los derechos humanos son reconocidos por la Constitución mexicana y por diversas leyes, por ejemplo, la Ley General de los Derechos de Niños, Niñas y Adolescentes'?",
+        exactAnswer: "Leyes",
+        options: [
+          "Leyes",
+          "Autoridades",
+          "Recursos naturales",
+          "Derechos humanos"
+        ]
+      },
+      {
+        id: "fce_cond_2",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Condiciones para Necesidades Básicas",
+        question: "¿Qué condición representa: 'En nuestra casa, escuela y comunidad, determinadas personas se encargan de vigilar que se cumplan las leyes y de proteger nuestros derechos'?",
+        exactAnswer: "Autoridades",
+        options: [
+          "Autoridades",
+          "Leyes",
+          "Recursos naturales",
+          "Derechos humanos"
+        ]
+      },
+      {
+        id: "fce_cond_3",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Condiciones para Necesidades Básicas",
+        question: "¿Qué condición representa: 'Sin el aire, el agua, la tierra, las plantas y los animales, sería imposible tener casas, ropa, energía eléctrica y alimentos'?",
+        exactAnswer: "Recursos naturales",
+        options: [
+          "Recursos naturales",
+          "Autoridades",
+          "Leyes",
+          "Derechos humanos"
+        ]
+      },
+      {
+        id: "fce_cond_4",
+        subject: "fce",
+        category: "fce_nec",
+        topic: "Condiciones para Necesidades Básicas",
+        question: "¿Qué condición representa: 'Todos contamos con derechos, sin importar nuestras características, es decir, que son universales y nos permiten tener una vida digna. Algunos de ellos son tener alimentos y acceso al agua potable, tener salud y descanso, no ser discriminados, ser protegidos, tener una familia'?",
+        exactAnswer: "Derechos humanos",
+        options: [
+          "Derechos humanos",
+          "Recursos naturales",
+          "Autoridades",
+          "Leyes"
+        ]
+      },
+
+      // Bloque 8: Biodiversidad, Territorio y Cultura
+      {
+        id: "fce_bio_1",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Biodiversidad y Territorio",
+        question: "¿Cuáles son los elementos que conforman la biodiversidad de nuestro territorio?",
+        exactAnswer: "Las plantas y los animales.",
+        options: [
+          "Las plantas y los animales.",
+          "Bosques y desiertos",
+          "Centros comerciales"
+        ]
+      },
+      {
+        id: "fce_bio_2",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Biodiversidad y Territorio",
+        question: "¿Qué son las especies endémicas?",
+        exactAnswer: "Son especies que solo existen en ese lugar y en ninguna otra parte del mundo",
+        options: [
+          "Son especies que solo existen en ese lugar y en ninguna otra parte del mundo",
+          "Son las especies que conforman la fauna y flora de nuestros territorio",
+          "Centros comerciales y plazas"
+        ]
+      },
+      {
+        id: "fce_bio_3",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Biodiversidad y Territorio",
+        question: "¿Qué son las regiones naturales?",
+        exactAnswer: "paisajes, relieves, climas, tipos de suelo y especies animales y de plantas",
+        options: [
+          "paisajes, relieves, climas, tipos de suelo y especies animales y de plantas",
+          "Centros comerciales y plazas",
+          "Son especies que solo existen en ese lugar y en ninguna otra parte del mundo"
+        ]
+      },
+      {
+        id: "fce_bio_4",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Biodiversidad y Territorio",
+        question: "¿Qué es la megadiversidad?",
+        exactAnswer: "paisajes, relieves, climas, tipos de suelo y especies animales y de plantas",
+        options: [
+          "paisajes, relieves, climas, tipos de suelo y especies animales y de plantas",
+          "sabana, estepa, desierto y bosque templado; y de contar con ríos, lagos y mares.",
+          "Son especies que solo existen en ese lugar y en ninguna otra parte del mundo"
+        ]
+      },
+      {
+        id: "fce_bio_5",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Patrimonio Biocultural",
+        question: "¿Qué es el patrimonio biocultural?",
+        exactAnswer: "son los conocimientos, cultura y prácticas de los pueblos originarios",
+        options: [
+          "son los conocimientos, cultura y prácticas de los pueblos originarios",
+          "Son especies que solo existen en ese lugar y en ninguna otra parte del mundo",
+          "paisajes, relieves, climas, tipos de suelo y especies animales y de plantas"
+        ]
+      },
+      {
+        id: "fce_bio_6",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Tradiciones y Cultivos",
+        question: "¿Qué es una milpa?",
+        exactAnswer: "Es un sistema agrícola tradicional en el que se aprovechan al máximo los recursos y el espacio al cultivar el maíz junto con otras especies vegetales como frijol, calabaza y chile, entre otras plantas",
+        options: [
+          "Es un sistema agrícola tradicional en el que se aprovechan al máximo los recursos y el espacio al cultivar el maíz junto con otras especies vegetales como frijol, calabaza y chile, entre otras plantas",
+          "Son sistemas artificiales de cultivo que inventaron nuestros antepasados en lugares donde predominaba el agua.",
+          "Para los pueblos originarios, la vegetación, fauna y elementos del universo, como el Sol, la Luna y las estrellas"
+        ]
+      },
+      {
+        id: "fce_bio_7",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Tradiciones y Cultivos",
+        question: "¿Qué son las chinampas?",
+        exactAnswer: "Son sistemas artificiales de cultivo que inventaron nuestros antepasados en lugares donde predominaba el agua.",
+        options: [
+          "Son sistemas artificiales de cultivo que inventaron nuestros antepasados en lugares donde predominaba el agua.",
+          "Es un sistema agrícola tradicional en el que se aprovechan al máximo los recursos y el espacio al cultivar el maíz junto con otras especies vegetales como frijol, calabaza y chile, entre otras plantas",
+          "Para los pueblos originarios, la vegetación, fauna y elementos del universo, como el Sol, la Luna y las estrellas"
+        ]
+      },
+      {
+        id: "fce_bio_8",
+        subject: "fce",
+        category: "fce_bio",
+        topic: "Tradiciones y Cultivos",
+        question: "¿Qué son las manifestaciones culturales?",
+        exactAnswer: "Para los pueblos originarios, la vegetación, fauna y elementos del universo, como el Sol, la Luna y las estrellas",
+        options: [
+          "Para los pueblos originarios, la vegetación, fauna y elementos del universo, como el Sol, la Luna y las estrellas",
+          "Es un sistema agrícola tradicional en el que se aprovechan al máximo los recursos y el espacio al cultivar el maíz junto con otras especies vegetales como frijol, calabaza y chile, entre otras plantas",
+          "Son sistemas artificiales de cultivo que inventaron nuestros antepasados en lugares donde predominaba el agua."
+        ]
       }
     ];
 
-    // ========================================================
-    // CONTROLADOR DE NIVELES (MENU PRINCIPAL)
-    // ========================================================
-    let activeLevel = 1;
+    // --- FILTRADO POR MATERIA GLOBAL ---
+    let currentSubject = 'esp'; // 'all', 'esp', 'mat', 'cie', 'fce'
 
-    function switchLevel(lvl) {
-      activeLevel = lvl;
-      document.getElementById('viewLevel1').classList.toggle('hidden', lvl !== 1);
-      document.getElementById('viewLevel2').classList.toggle('hidden', lvl !== 2);
+    function setSubject(subj) {
+      sound.playClick();
+      currentSubject = subj;
+      const subjects = ['all', 'esp', 'mat', 'cie', 'fce'];
+      subjects.forEach(s => {
+        const btn = document.getElementById(`subj-btn-${s}`);
+        if (!btn) return;
+        if (s === subj) {
+          btn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-yellow-400 text-indigo-950 font-bold shadow";
+        } else {
+          btn.className = "px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all text-white/80 hover:text-white";
+        }
+      });
 
-      const b1 = document.getElementById('lvlBtn1');
-      const b2 = document.getElementById('lvlBtn2');
-      if (lvl === 1) {
-        b1.className = 'lvl-btn active-lvl1';
-        b2.className = 'lvl-btn';
-      } else {
-        b1.className = 'lvl-btn';
-        b2.className = 'lvl-btn active-lvl2';
-        initL2Match();
+      macheteFilter = 'all';
+      renderMachete();
+      initFlashcards();
+      initQuiz();
+      initBuilder();
+      initMatchGame();
+    }
+
+    function getActiveDataset() {
+      if (currentSubject === 'all') return STUDY_DATA;
+      return STUDY_DATA.filter(item => item.subject === currentSubject);
+    }
+
+    // --- 2. SISTEMA DE AUDIO SINTETIZADO (Web Audio API) ---
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playCorrect() {
+        try {
+          this.init();
+          const now = this.ctx.currentTime;
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc1.type = 'triangle';
+          osc2.type = 'sine';
+
+          osc1.frequency.setValueAtTime(523.25, now); // C5
+          osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+          osc1.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+
+          osc2.frequency.setValueAtTime(261.63, now); // C4
+          osc2.frequency.exponentialRampToValueAtTime(392.00, now + 0.2);
+
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.5);
+          osc2.stop(now + 0.5);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      playWrong() {
+        try {
+          this.init();
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(140, now + 0.3);
+
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      playClick() {
+        try {
+          this.init();
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(450, now);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } catch (e) {}
+      }
+      playFanfare() {
+        try {
+          this.init();
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const now = this.ctx.currentTime + (idx * 0.12);
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.4);
+          });
+        } catch (e) {}
+      }
+      playHeartLost() {
+        try {
+          this.init();
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(110, now + 0.4);
+
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.45);
+        } catch (e) {}
+      }
+      playGameOver() {
+        try {
+          this.init();
+          const notes = [293.66, 277.18, 261.63, 220.00];
+          notes.forEach((freq, idx) => {
+            const now = this.ctx.currentTime + (idx * 0.18);
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.35);
+          });
+        } catch (e) {}
+      }
+    }
+    const sound = new SoundFX();
+
+    // --- 3. ESTADO GLOBAL Y GAMIFICACIÓN ---
+    let stars = 0;
+    function addStars(num) {
+      stars += num;
+      document.getElementById('star-count').innerText = stars;
+      
+      const rankEl = document.getElementById('user-rank');
+      if (stars >= 50) rankEl.innerText = "¡Maestro de 10! 🏆";
+      else if (stars >= 30) rankEl.innerText = "Experto 🥇";
+      else if (stars >= 15) rankEl.innerText = "Avanzado 🥈";
+      else if (stars >= 5) rankEl.innerText = "Aprendiz ⭐";
+      else rankEl.innerText = "Explorador";
+    }
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 70,
+          spread: 60,
+          origin: { y: 0.7 }
+        });
       }
     }
 
-    // ========================================================
-    // LÓGICA NIVEL 1: TRIVIA Y FLASHCARDS
-    // ========================================================
-    let qIdx = 0, qScore = 0, qLives = 3, qLocked = false;
-    let fcIdx = 0;
-
-    function switchL1Tab(tab) {
-      document.getElementById('tabL1Trivia').classList.toggle('hidden', tab !== 'trivia');
-      document.getElementById('tabL1Cards').classList.toggle('hidden', tab !== 'cards');
-      document.getElementById('subLvl1Trivia').classList.toggle('active', tab === 'trivia');
-      document.getElementById('subLvl1Cards').classList.toggle('active', tab === 'cards');
-      if (tab === 'cards') renderCard();
+    function showModal(title, msg) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-message').innerText = msg;
+      document.getElementById('celebration-modal').classList.remove('hidden');
+      sound.playFanfare();
+      triggerConfetti();
+    }
+    function closeModal() {
+      document.getElementById('celebration-modal').classList.add('hidden');
     }
 
-    function renderQuestion() {
-      qLocked = false;
-      const data = baseQuestions[qIdx];
-      document.getElementById('qText').textContent = data.q;
-      document.getElementById('progressBar').style.width = `${((qIdx + 1) / baseQuestions.length) * 100}%`;
-      document.getElementById('qFeedback').classList.add('hidden');
-      document.getElementById('qNextBtn').classList.add('hidden');
+    // --- SÍNTESIS DE VOZ PARA APRENDER PRONUNCIACIÓN ---
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-MX';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
 
-      const optsDiv = document.getElementById('qOptions');
-      optsDiv.innerHTML = '';
-      data.options.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerHTML = `<span style="background:#1e293b; color:#38bdf8; font-weight:900; font-size:11px; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">${String.fromCharCode(65 + idx)}</span> <span>${opt}</span>`;
-        btn.onclick = () => answerQuestion(idx, btn);
-        optsDiv.appendChild(btn);
+    // --- 4. GESTOR DE PESTAÑAS (CORREGIDO SIN AÑADIR 'flex' INLINE) ---
+    function setTab(tabName) {
+      sound.playClick();
+      const tabs = ['machete', 'flashcards', 'quiz', 'builder', 'match'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`section-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          sec.classList.add('active');
+          btn.className = "tab-btn active px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all bg-yellow-400 text-indigo-950 shadow-md";
+        } else {
+          sec.classList.remove('active');
+          btn.className = "tab-btn px-4 py-2 rounded-xl flex items-center gap-2 whitespace-nowrap transition-all bg-white/10 hover:bg-white/20 text-white";
+        }
+      });
+
+      // Inicializadores específicos
+      if (tabName === 'quiz' && quizCurrentIndex === 0 && !quizStarted) initQuiz();
+      if (tabName === 'builder' && !builderCurrentItem) initBuilder();
+      if (tabName === 'match' && matchState.cards.length === 0) initMatchGame();
+    }
+
+    // --- 5. LÓGICA DE LA GUÍA MAESTRA / MACHETE ---
+    let macheteBlinded = false;
+    let macheteFilter = 'all';
+    let macheteSearchTerm = '';
+
+    function handleMacheteSearch(val) {
+      macheteSearchTerm = val.toLowerCase().trim();
+      renderMachete();
+    }
+
+    function renderMachete() {
+      const container = document.getElementById('machete-list');
+      container.innerHTML = '';
+
+      let pool = getActiveDataset();
+
+      let filtered = macheteFilter === 'all' 
+        ? pool 
+        : pool.filter(item => item.category === macheteFilter);
+
+      if (macheteSearchTerm) {
+        filtered = filtered.filter(item => 
+          item.question.toLowerCase().includes(macheteSearchTerm) || 
+          item.exactAnswer.toLowerCase().includes(macheteSearchTerm)
+        );
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-200">
+            <i class="fa-regular fa-face-frown text-3xl mb-2"></i>
+            <p class="font-bold text-sm">No encontramos ningún concepto con esos filtros.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-4 md:p-5 border border-slate-200 shadow-sm hover:border-indigo-300 transition-all flex flex-col md:flex-row md:items-start justify-between gap-3";
+        
+        let badgeColor = 'bg-amber-100 text-amber-800';
+        if (item.category === 'nar') badgeColor = 'bg-sky-100 text-sky-800';
+        if (item.category === 'mat_geom') badgeColor = 'bg-rose-100 text-rose-800';
+        if (item.category === 'mat_med') badgeColor = 'bg-violet-100 text-violet-800';
+        if (item.category === 'cie_bio') badgeColor = 'bg-emerald-100 text-emerald-800';
+        if (item.category === 'cie_qui') badgeColor = 'bg-cyan-100 text-cyan-800';
+        if (item.category === 'fce_nec') badgeColor = 'bg-teal-100 text-teal-800';
+        if (item.category === 'fce_bio') badgeColor = 'bg-lime-100 text-lime-800';
+
+        let subjectIcon = '📝';
+        if (item.subject === 'mat') subjectIcon = '📐';
+        if (item.subject === 'cie') subjectIcon = '🔬';
+        if (item.subject === 'fce') subjectIcon = '🤝';
+
+        card.innerHTML = `
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span class="text-xs px-2.5 py-0.5 rounded-full font-bold ${badgeColor}">
+                ${subjectIcon} ${item.topic}
+              </span>
+              <span class="text-xs text-slate-400 font-bold">#${index + 1}</span>
+            </div>
+            <h4 class="text-base font-bold text-slate-800 mb-2">${item.question}</h4>
+            <div class="answer-wrapper ${macheteBlinded ? 'relative' : ''}">
+              <div class="machete-answer p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-semibold text-indigo-950 ${macheteBlinded ? 'blur-sm select-none opacity-40' : ''}">
+                <i class="fa-solid fa-quote-left text-indigo-300 mr-1.5"></i>
+                <span class="text-slate-900 font-bold">${item.exactAnswer}</span>
+              </div>
+              ${macheteBlinded ? `
+                <button onclick="revealSingleMachete(this)" class="absolute inset-0 m-auto h-9 w-40 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-md hover:bg-indigo-700 transition flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-eye"></i> Ver respuesta
+                </button>
+              ` : ''}
+            </div>
+          </div>
+          <div class="flex items-center gap-1 self-end md:self-start">
+            <button onclick="speakText('${item.exactAnswer.replace(/'/g, "\\'")}')" title="Escuchar pronunciación" class="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+            <button onclick="copyToClipboard('${item.exactAnswer.replace(/'/g, "\\'")}')" title="Copiar texto exacto" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
       });
     }
 
-    function answerQuestion(selected, btn) {
-      if (qLocked) return;
-      qLocked = true;
-      const data = baseQuestions[qIdx];
-      const allBtns = document.querySelectorAll('#qOptions .option-btn');
-      const fb = document.getElementById('qFeedback');
-
-      if (selected === data.correct) {
-        qScore += 10;
-        document.getElementById('qScore').textContent = qScore;
-        btn.classList.add('opt-correct');
-        fb.className = 'feedback-box good';
-        fb.innerHTML = `🌟 <b>¡Excelente!</b> ${data.fb}`;
+    function toggleMacheteBlind() {
+      sound.playClick();
+      macheteBlinded = !macheteBlinded;
+      const btnText = document.getElementById('toggle-blind-text');
+      const btnIcon = document.getElementById('toggle-blind-icon');
+      if (macheteBlinded) {
+        btnText.innerText = "Mostrar todas las respuestas";
+        btnIcon.className = "fa-solid fa-eye";
       } else {
-        qLives--;
-        updateHeartsUI();
-        btn.classList.add('opt-wrong');
-        allBtns[data.correct].classList.add('opt-correct');
-        fb.className = 'feedback-box bad';
-        fb.innerHTML = `💡 <b>Recuerda:</b> ${data.fb}`;
+        btnText.innerText = "Ocultar respuestas para practicar";
+        btnIcon.className = "fa-solid fa-eye-slash";
       }
-
-      fb.classList.remove('hidden');
-      const nextBtn = document.getElementById('qNextBtn');
-      nextBtn.classList.remove('hidden');
-      if (qLives <= 0) nextBtn.textContent = "Ver Resultados 🏁";
+      renderMachete();
     }
 
-    function updateHeartsUI() {
-      let str = '';
-      for (let i = 0; i < 3; i++) str += i < qLives ? '❤️' : '🤍';
-      document.getElementById('qHearts').textContent = str;
+    function revealSingleMachete(btn) {
+      sound.playClick();
+      const wrapper = btn.closest('.answer-wrapper');
+      const ansDiv = wrapper.querySelector('.machete-answer');
+      ansDiv.classList.remove('blur-sm', 'select-none', 'opacity-40');
+      btn.remove();
     }
 
-    function nextQuestion() {
-      if (qLives <= 0 || qIdx >= baseQuestions.length - 1) {
-        showFinalTrivia();
-        return;
-      }
-      qIdx++;
-      renderQuestion();
+    function filterMachete(cat) {
+      sound.playClick();
+      macheteFilter = cat;
+      const cats = ['all', 'pub', 'nar', 'mat_geom', 'mat_med', 'cie_bio', 'cie_qui', 'fce_nec', 'fce_bio'];
+      cats.forEach(c => {
+        const b = document.getElementById(`mf-${c}`);
+        if (!b) return;
+        if (c === cat) {
+          b.className = "mf-btn px-3 py-1.5 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-sm";
+        } else {
+          b.className = "mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50";
+        }
+      });
+      renderMachete();
     }
 
-    function showFinalTrivia() {
-      document.getElementById('qText').classList.add('hidden');
-      document.getElementById('qOptions').classList.add('hidden');
-      document.getElementById('qFeedback').classList.add('hidden');
-      document.getElementById('qNextBtn').classList.add('hidden');
-      document.getElementById('progressBar').parentElement.classList.add('hidden');
-
-      const screen = document.getElementById('qFinalScreen');
-      screen.classList.remove('hidden');
-      document.getElementById('qFinalMsg').innerHTML = `Lograste <b>${qScore} puntos</b> de un total de ${baseQuestions.length * 10}.<br>¡Excelente preparación para el examen!`;
+    function copyToClipboard(text) {
+      sound.playClick();
+      const tempInput = document.createElement('textarea');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      alertSimple("¡Texto exacto copiado al portapapeles!");
     }
 
-    function restartTrivia() {
-      qIdx = 0; qScore = 0; qLives = 3;
-      document.getElementById('qScore').textContent = '0';
-      updateHeartsUI();
-      document.getElementById('qNextBtn').textContent = "Siguiente Pregunta ➔";
-      document.getElementById('qText').classList.remove('hidden');
-      document.getElementById('qOptions').classList.remove('hidden');
-      document.getElementById('progressBar').parentElement.classList.remove('hidden');
-      document.getElementById('qFinalScreen').classList.add('hidden');
-      renderQuestion();
+    // --- 6. LÓGICA DE LAS TARJETAS FLASH (FLASHCARDS) ---
+    let flashcardsList = [];
+    let fcIndex = 0;
+    let isFlipped = false;
+
+    function initFlashcards() {
+      flashcardsList = [...getActiveDataset()];
+      fcIndex = 0;
+      updateFlashcardUI();
+    }
+
+    function updateFlashcardUI() {
+      if (flashcardsList.length === 0) return;
+      const current = flashcardsList[fcIndex];
+      document.getElementById('fc-current-index').innerText = fcIndex + 1;
+      document.getElementById('fc-total').innerText = flashcardsList.length;
+
+      let icon = '📝 ';
+      if (current.subject === 'mat') icon = '📐 ';
+      if (current.subject === 'cie') icon = '🔬 ';
+      if (current.subject === 'fce') icon = '🤝 ';
+
+      document.getElementById('fc-topic-front').innerText = `${icon}${current.topic}`;
+      document.getElementById('fc-question').innerText = current.question;
+      document.getElementById('fc-answer').innerText = current.exactAnswer;
+
+      // Restablecer giro a la cara frontal
+      const inner = document.getElementById('flashcard-inner');
+      inner.classList.remove('rotate-y-180');
+      isFlipped = false;
     }
 
     function flipCard() {
-      document.getElementById('cardInner').classList.toggle('flipped');
-    }
-
-    function renderCard() {
-      const data = baseQuestions[fcIdx];
-      const card = document.getElementById('cardInner');
-      card.classList.remove('flipped');
-      setTimeout(() => {
-        document.getElementById('fcIcon').textContent = data.icon;
-        document.getElementById('fcQuestion').textContent = data.q;
-        document.getElementById('fcAnswer').textContent = data.ans;
-        document.getElementById('fcCounter').textContent = `${fcIdx + 1} / ${baseQuestions.length}`;
-      }, 100);
-    }
-
-    function nextCard() { fcIdx = (fcIdx + 1) % baseQuestions.length; renderCard(); }
-    function prevCard() { fcIdx = (fcIdx - 1 + baseQuestions.length) % baseQuestions.length; renderCard(); }
-
-    // ========================================================
-    // LÓGICA NIVEL 2: EXPERTO (EMPAREJAR + CASOS + FRASES)
-    // ========================================================
-    function switchL2Tab(tab) {
-      document.getElementById('tabL2Match').classList.toggle('hidden', tab !== 'match');
-      document.getElementById('tabL2Cases').classList.toggle('hidden', tab !== 'cases');
-      document.getElementById('tabL2Fill').classList.toggle('hidden', tab !== 'fill');
-
-      document.getElementById('subLvl2Match').classList.toggle('active', tab === 'match');
-      document.getElementById('subLvl2Cases').classList.toggle('active', tab === 'cases');
-      document.getElementById('subLvl2Fill').classList.toggle('active', tab === 'fill');
-
-      if (tab === 'cases') renderCase();
-      if (tab === 'fill') renderFill();
-    }
-
-    // 2.1 MATCHING
-    const matchSets = [
-      {
-        title: "Bloque A: Ecosistemas y Territorio",
-        pairs: [
-          { id: 1, c: "🌿 Biodiversidad", d: "Vegetación y fauna de nuestro territorio." },
-          { id: 2, c: "🦎 Especie Endémica", d: "Solo existe en ese lugar del mundo." },
-          { id: 3, c: "🏞️ Ecosistema", d: "Comunidad de seres vivos y medio físico interactuando." },
-          { id: 4, c: "🏺 Patrimonio Biocultural", d: "Saberes y prácticas de pueblos originarios." },
-          { id: 5, c: "🇲🇽 Megadiversidad", d: "Riqueza de desiertos, selvas, ríos y mares." }
-        ]
-      },
-      {
-        title: "Bloque B: Convivencia y Solución Pacífica",
-        pairs: [
-          { id: 6, c: "⚡ Conflicto", d: "Desacuerdo entre personas." },
-          { id: 7, c: "🗣️ Diálogo", d: "Conversación respetuosa para llegar a acuerdos." },
-          { id: 8, c: "🕊️ Acciones de Paz", d: "Ser educados, amables y ayudar." },
-          { id: 9, c: "🤝 Evitar conflicto", d: "Tolerancia y respeto hacia los demás." },
-          { id: 10, c: "🌾 Interacción humana", d: "Crea economía y manifestaciones culturales." }
-        ]
-      }
-    ];
-
-    let matchSetIdx = 0, selA = null, selB = null, pairsLeft = 0;
-
-    function initL2Match() {
-      const data = matchSets[matchSetIdx];
-      document.getElementById('matchGroupHeader').textContent = data.title;
-      document.getElementById('matchSuccessBox').classList.add('hidden');
-      document.getElementById('matchContainer').classList.remove('hidden');
-
-      const colA = document.getElementById('colConcepts');
-      const colB = document.getElementById('colDefs');
-      colA.innerHTML = '<span class="col-lbl">Concepto</span>';
-      colB.innerHTML = '<span class="col-lbl">Definición</span>';
-
-      pairsLeft = data.pairs.length;
-      selA = null; selB = null;
-
-      const pA = [...data.pairs].sort(() => Math.random() - 0.5);
-      const pB = [...data.pairs].sort(() => Math.random() - 0.5);
-
-      pA.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'match-btn';
-        btn.textContent = item.c;
-        btn.onclick = () => {
-          if (selA) selA.classList.remove('selected');
-          selA = btn;
-          btn.classList.add('selected');
-          btn.dataset.id = item.id;
-          evalMatch();
-        };
-        colA.appendChild(btn);
-      });
-
-      pB.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'match-btn';
-        btn.textContent = item.d;
-        btn.onclick = () => {
-          if (selB) selB.classList.remove('selected');
-          selB = btn;
-          btn.classList.add('selected');
-          btn.dataset.id = item.id;
-          evalMatch();
-        };
-        colB.appendChild(btn);
-      });
-    }
-
-    function evalMatch() {
-      if (!selA || !selB) return;
-      if (selA.dataset.id === selB.dataset.id) {
-        selA.className = 'match-btn matched';
-        selB.className = 'match-btn matched';
-        selA = null; selB = null;
-        pairsLeft--;
-        if (pairsLeft === 0) {
-          setTimeout(() => {
-            document.getElementById('matchContainer').classList.add('hidden');
-            document.getElementById('matchSuccessBox').classList.remove('hidden');
-          }, 300);
-        }
+      sound.playClick();
+      const inner = document.getElementById('flashcard-inner');
+      isFlipped = !isFlipped;
+      if (isFlipped) {
+        inner.classList.add('rotate-y-180');
       } else {
-        const a = selA, b = selB;
-        a.style.borderColor = '#ef4444';
-        b.style.borderColor = '#ef4444';
-        setTimeout(() => {
-          a.classList.remove('selected');
-          b.classList.remove('selected');
-          a.style.borderColor = '#334155';
-          b.style.borderColor = '#334155';
-        }, 400);
-        selA = null; selB = null;
+        inner.classList.remove('rotate-y-180');
       }
     }
 
-    function nextMatchBlock() {
-      matchSetIdx = (matchSetIdx + 1) % matchSets.length;
-      initL2Match();
+    function nextCard() {
+      sound.playClick();
+      fcIndex = (fcIndex + 1) % flashcardsList.length;
+      updateFlashcardUI();
     }
 
-    // 2.2 CASOS REALES
-    const cases = [
-      {
-        story: "El axolote mexicano habita exclusivamente en los canales de Xochimilco y no se encuentra de forma silvestre en ningún otro país del planeta.",
-        prompt: "¿A qué concepto de la guía se refiere?",
-        opts: ["Especie endémica", "Especie doméstica", "Mito fantástico"],
-        ans: 0,
-        exp: "Las especies endémicas son aquellas que únicamente existen en esa región específica."
-      },
-      {
-        story: "Durante el recreo, dos alumnos discuten porque ambos quieren ocupar la misma mesa y ninguno quiere ceder.",
-        prompt: "¿Cómo nació este conflicto?",
-        opts: ["Porque practicaron la tolerancia", "Porque están en desacuerdo y no han dialogado", "Por una actividad económica"],
-        ans: 1,
-        exp: "Los conflictos nacen cuando las partes tienen un desacuerdo y no han alcanzado un pacto."
-      },
-      {
-        story: "Para resolver la disputa por la mesa, se sientan a conversar tranquilamente y acuerdan compartir el espacio.",
-        prompt: "¿Qué herramienta cívica usaron?",
-        opts: ["El diálogo", "La rotación de la luna", "El patrimonio inerte"],
-        ans: 0,
-        exp: "El diálogo es la conversación respetuosa indispensable para solucionar controversias."
-      },
-      {
-        story: "En la Huasteca, los campesinos aplican métodos ancestrales transmitidos por sus abuelos para cosechar vainilla sin dañar la selva.",
-        prompt: "¿Qué representa esta sabiduría?",
-        opts: ["Patrimonio biocultural", "Un conflicto agrario", "Una leyenda urbana"],
-        ans: 0,
-        exp: "El patrimonio biocultural abarca la cultura, prácticas y saberes tradicionales de los pueblos originarios."
+    function prevCard() {
+      sound.playClick();
+      fcIndex = (fcIndex - 1 + flashcardsList.length) % flashcardsList.length;
+      updateFlashcardUI();
+    }
+
+    function shuffleFlashcards() {
+      sound.playClick();
+      flashcardsList.sort(() => Math.random() - 0.5);
+      fcIndex = 0;
+      updateFlashcardUI();
+      alertSimple("¡Tarjetas barajadas!");
+    }
+
+    function cardMark(known) {
+      if (known) {
+        sound.playCorrect();
+        addStars(1);
+        nextCard();
+      } else {
+        sound.playWrong();
+        flipCard();
       }
-    ];
+    }
 
-    let caseIdx = 0, caseScore = 0;
+    // --- 7. MODO: SIMULADOR DE EXAMEN ---
+    let quizList = [];
+    let quizCurrentIndex = 0;
+    let quizScore = 0;
+    let quizStarted = false;
+    let quizAnswered = false;
+    let quizMode = 'survival'; // 'survival' o 'practice'
+    let quizLives = 3;
+    const MAX_LIVES = 3;
+    let currentStreak = 0;
+    let maxStreak = 0;
 
-    function renderCase() {
-      const c = cases[caseIdx];
-      document.getElementById('caseStory').textContent = c.story;
-      document.getElementById('casePrompt').textContent = c.prompt;
-      document.getElementById('caseFeedback').classList.add('hidden');
-      document.getElementById('caseNextBtn').classList.add('hidden');
+    function setQuizMode(mode) {
+      sound.playClick();
+      quizMode = mode;
+      const survivalBtn = document.getElementById('quiz-mode-survival-btn');
+      const practiceBtn = document.getElementById('quiz-mode-practice-btn');
+      const heartsContainer = document.getElementById('quiz-hearts-container');
 
-      const optsDiv = document.getElementById('caseOptions');
-      optsDiv.innerHTML = '';
-      c.opts.forEach((opt, idx) => {
+      if (mode === 'survival') {
+        survivalBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-rose-500 text-white shadow-sm flex items-center gap-1.5";
+        practiceBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5";
+        heartsContainer.classList.remove('hidden');
+      } else {
+        practiceBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm flex items-center gap-1.5";
+        survivalBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-1.5";
+        heartsContainer.classList.add('hidden');
+      }
+
+      initQuiz();
+    }
+
+    function updateHeartsUI() {
+      for (let i = 1; i <= MAX_LIVES; i++) {
+        const heartEl = document.getElementById(`quiz-heart-${i}`);
+        if (!heartEl) continue;
+        if (i <= quizLives) {
+          heartEl.innerText = '❤️';
+          heartEl.classList.remove('grayscale', 'opacity-40', 'scale-90');
+        } else {
+          heartEl.innerText = '💔';
+          heartEl.classList.add('grayscale', 'opacity-40', 'scale-90');
+        }
+      }
+    }
+
+    function initQuiz() {
+      quizStarted = true;
+      quizList = [...getActiveDataset()].sort(() => Math.random() - 0.5);
+      quizCurrentIndex = 0;
+      quizScore = 0;
+      quizLives = MAX_LIVES;
+      currentStreak = 0;
+      maxStreak = 0;
+
+      document.getElementById('quiz-streak-count').innerText = currentStreak;
+      document.getElementById('quiz-total-num').innerText = quizList.length;
+
+      // Restablecer vistas
+      document.getElementById('quiz-active-card').classList.remove('hidden');
+      document.getElementById('quiz-gameover-card').classList.add('hidden');
+      document.getElementById('quiz-victory-card').classList.add('hidden');
+
+      updateHeartsUI();
+      loadQuizQuestion();
+    }
+
+    function loadQuizQuestion() {
+      quizAnswered = false;
+      const q = quizList[quizCurrentIndex];
+      document.getElementById('quiz-q-num').innerText = quizCurrentIndex + 1;
+      document.getElementById('quiz-question-type').innerText = q.topic;
+      document.getElementById('quiz-question-text').innerText = q.question;
+      
+      const pct = ((quizCurrentIndex + 1) / quizList.length) * 100;
+      document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
+
+      const nextBtn = document.getElementById('quiz-next-btn');
+      const feedback = document.getElementById('quiz-feedback');
+      nextBtn.classList.add('hidden');
+      feedback.classList.add('hidden');
+
+      // Mezclar opciones
+      const optionsContainer = document.getElementById('quiz-options-container');
+      optionsContainer.innerHTML = '';
+      
+      const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+      shuffledOptions.forEach((opt, idx) => {
         const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = opt;
-        btn.onclick = () => {
-          document.querySelectorAll('#caseOptions .option-btn').forEach(b => b.style.pointerEvents = 'none');
-          const fb = document.getElementById('caseFeedback');
-          if (idx === c.ans) {
-            caseScore++;
-            btn.classList.add('opt-correct');
-            fb.className = 'feedback-box good';
-            fb.innerHTML = `🌟 <b>¡Correcto!</b> ${c.exp}`;
-          } else {
-            btn.classList.add('opt-wrong');
-            fb.className = 'feedback-box bad';
-            fb.innerHTML = `💡 ${c.exp}`;
-          }
-          fb.classList.remove('hidden');
-          document.getElementById('caseNextBtn').classList.remove('hidden');
-        };
-        optsDiv.appendChild(btn);
+        btn.className = "quiz-opt-btn w-full p-4 rounded-2xl border-2 border-slate-200 hover:border-indigo-400 bg-white hover:bg-indigo-50/50 text-left text-sm font-semibold text-slate-800 transition flex items-start gap-3 press-effect";
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0 mt-0.5">${String.fromCharCode(65 + idx)}</span>
+          <span class="flex-1">${opt}</span>
+        `;
+        btn.onclick = () => selectQuizAnswer(opt, btn, q.exactAnswer);
+        optionsContainer.appendChild(btn);
       });
     }
 
-    function nextCase() {
-      caseIdx = (caseIdx + 1) % cases.length;
-      renderCase();
+    function selectQuizAnswer(selected, button, correctAnswer) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+
+      const allBtns = document.querySelectorAll('.quiz-opt-btn');
+      const feedback = document.getElementById('quiz-feedback');
+      const nextBtn = document.getElementById('quiz-next-btn');
+
+      // Normalizar texto para comparación robusta
+      const clean = str => str.trim().toLowerCase().replace(/[.,;:]/g, '');
+      const isCorrect = clean(selected) === clean(correctAnswer);
+
+      allBtns.forEach(b => {
+        b.disabled = true;
+        const text = b.querySelector('span:nth-child(2)').innerText;
+        if (clean(text) === clean(correctAnswer)) {
+          b.classList.remove('border-slate-200', 'bg-white');
+          b.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900', 'font-bold');
+          b.querySelector('span:first-child').className = "w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5";
+          b.querySelector('span:first-child').innerHTML = "✓";
+        }
+      });
+
+      if (isCorrect) {
+        sound.playCorrect();
+        addStars(2);
+        quizScore++;
+        currentStreak++;
+        if (currentStreak > maxStreak) maxStreak = currentStreak;
+        document.getElementById('quiz-streak-count').innerText = currentStreak;
+
+        feedback.className = "mt-6 p-4 rounded-2xl border-2 border-emerald-300 bg-emerald-50 text-emerald-900 text-sm";
+        feedback.innerHTML = `
+          <div class="font-bold flex items-center gap-2 mb-1 text-emerald-800">
+            <i class="fa-solid fa-circle-check text-lg"></i> ¡Correcto! Es exactamente la respuesta de la guía.
+          </div>
+          <p class="text-xs text-emerald-700">¡Ganaste +2 estrellas! 🔥 Racha actual: ${currentStreak}</p>
+        `;
+        nextBtn.classList.remove('hidden');
+      } else {
+        // Respuesta incorrecta
+        currentStreak = 0;
+        document.getElementById('quiz-streak-count').innerText = currentStreak;
+
+        button.classList.remove('border-slate-200', 'bg-white');
+        button.classList.add('border-rose-400', 'bg-rose-50', 'text-rose-900');
+        button.querySelector('span:first-child').className = "w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5";
+        button.querySelector('span:first-child').innerHTML = "✕";
+
+        if (quizMode === 'survival') {
+          quizLives--;
+          sound.playHeartLost();
+          updateHeartsUI();
+
+          // Efecto visual de golpe en corazones
+          const lostHeart = document.getElementById(`quiz-heart-${quizLives + 1}`);
+          if (lostHeart) {
+            lostHeart.classList.add('scale-150');
+            setTimeout(() => lostHeart.classList.remove('scale-150'), 300);
+          }
+
+          if (quizLives <= 0) {
+            // GAME OVER TRAS 3 ERRORES
+            feedback.className = "mt-6 p-4 rounded-2xl border-2 border-rose-300 bg-rose-50 text-rose-900 text-sm";
+            feedback.innerHTML = `
+              <div class="font-bold flex items-center gap-2 mb-1 text-rose-800">
+                <i class="fa-solid fa-heart-crack text-lg text-rose-600"></i> ¡Perdiste tu último corazón!
+              </div>
+              <p class="text-xs font-semibold text-rose-950 mt-1 bg-white/70 p-2 rounded-xl">La respuesta exacta era: "${correctAnswer}"</p>
+            `;
+            setTimeout(() => {
+              triggerGameOver();
+            }, 1800);
+            return;
+          }
+        } else {
+          sound.playWrong();
+        }
+
+        feedback.className = "mt-6 p-4 rounded-2xl border-2 border-rose-300 bg-rose-50 text-rose-900 text-sm";
+        feedback.innerHTML = `
+          <div class="font-bold flex items-center gap-2 mb-1 text-rose-800">
+            <i class="fa-solid fa-circle-xmark text-lg"></i> ¡Cuidado con el maestro! La respuesta textual exacta es:
+          </div>
+          <p class="text-xs font-semibold text-rose-950 mt-1 bg-white/70 p-2 rounded-xl">"${correctAnswer}"</p>
+          ${quizMode === 'survival' ? `<p class="text-xs text-rose-600 font-bold mt-2">💔 Te quedan ${quizLives} ${quizLives === 1 ? 'corazón' : 'corazones'}.</p>` : ''}
+        `;
+        nextBtn.classList.remove('hidden');
+      }
+
+      feedback.classList.remove('hidden');
     }
 
-    // 2.3 COMPLETAR PALABRAS
-    const fillData = [
+    function triggerGameOver() {
+      sound.playGameOver();
+      document.getElementById('quiz-active-card').classList.add('hidden');
+      document.getElementById('gameover-answered').innerText = `${quizCurrentIndex + 1} de ${quizList.length}`;
+      document.getElementById('gameover-streak').innerText = `${maxStreak} seguidas`;
+      document.getElementById('quiz-gameover-card').classList.remove('hidden');
+    }
+
+    function nextQuizQuestion() {
+      sound.playClick();
+      quizCurrentIndex++;
+      if (quizCurrentIndex < quizList.length) {
+        loadQuizQuestion();
+      } else {
+        // Gran Victoria
+        triggerVictory();
+      }
+    }
+
+    function triggerVictory() {
+      sound.playFanfare();
+      triggerConfetti();
+      addStars(10); // Bono de victoria
+
+      document.getElementById('quiz-active-card').classList.add('hidden');
+      document.getElementById('victory-score').innerText = `${quizScore} de ${quizList.length}`;
+      document.getElementById('victory-streak').innerText = `${maxStreak} seguidas`;
+
+      const heartsRow = document.getElementById('victory-hearts-row');
+      if (quizMode === 'survival') {
+        heartsRow.style.display = 'flex';
+        let heartsStr = '';
+        for (let i = 0; i < quizLives; i++) heartsStr += '❤️ ';
+        document.getElementById('victory-hearts').innerText = heartsStr || '❤️';
+      } else {
+        heartsRow.style.display = 'none';
+      }
+
+      document.getElementById('quiz-victory-card').classList.remove('hidden');
+    }
+
+    // --- 8. MODO: ARMA LA FRASE (FRASES TEXTUALES EN PEDAZOS) ---
+    let builderCurrentItem = null;
+    let builderAnswerBlocks = [];
+    let builderAvailableBlocks = [];
+
+    // Lista de ítems clave ideales para armar (Español, Matemáticas, Ciencias y Formación Cívica)
+    const BUILDER_ITEMS = [
+      // Español
       {
-        text: "En un ecosistema interactúan la comunidad de seres vivos (denominada _______) y el medio físico (biotopo).",
-        ans: "biocenosis",
-        opts: ["biocenosis", "megadiversidad", "leyenda", "rotación"]
+        subject: "esp",
+        term: "¿Qué es un anuncio publicitario?",
+        chunks: ["Son mensajes", "que se utilizan", "para promocionar", "productos o servicios."]
       },
       {
-        text: "Las especies que solo habitan en esa región geográfica se clasifican como _______.",
-        ans: "endémicas",
-        opts: ["endémicas", "migratorias", "extintas", "domésticas"]
+        subject: "esp",
+        term: "¿Qué hace la publicidad real?",
+        chunks: ["Informa sobre", "las características y beneficios", "de productos y servicios", "de forma honesta"]
       },
       {
-        text: "Para prevenir desacuerdos se debe actuar con respeto mutuo y _______.",
-        ans: "tolerancia",
-        opts: ["tolerancia", "gritos", "indiferencia", "prisa"]
+        subject: "esp",
+        term: "¿Qué hace la publicidad engañosa?",
+        chunks: ["Manipula", "mediante", "información", "falsa o exagerada."]
       },
       {
-        text: "El patrimonio _______ abarca los saberes tradicionales que los pueblos originarios tienen de su entorno.",
-        ans: "biocultural",
-        opts: ["biocultural", "financiero", "tecnológico", "turístico"]
+        subject: "esp",
+        term: "Eslogan o lema",
+        chunks: ["Es una frase corta", "y llamativa que resume", "la idea principal", "del anuncio."]
+      },
+      {
+        subject: "esp",
+        term: "Logotipo",
+        chunks: ["Es el símbolo gráfico", "que identifica", "a la marca"]
+      },
+      {
+        subject: "esp",
+        term: "Llamada a la acción",
+        chunks: ["Instrucción", "para que el espectador", "haga algo."]
+      },
+      {
+        subject: "esp",
+        term: "¿Qué es un texto narrativo?",
+        chunks: ["Son los que cuentan", "una serie de acontecimientos,", "reales o ficticios,", "por medio de la voz", "de un narrador"]
+      },
+      {
+        subject: "esp",
+        term: "¿Qué es un cuento?",
+        chunks: ["Es un texto literario", "de ficción que relata", "una historia breve", "sobre un suceso transformador", "en la vida de un personaje."]
+      },
+      {
+        subject: "esp",
+        term: "¿Qué es una crónica?",
+        chunks: ["Es un relato periodístico", "y narrativo que busca", "captar la atención del lector", "al contar hechos reales", "de manera objetiva y detallada."]
+      },
+      {
+        subject: "esp",
+        term: "Personajes",
+        chunks: ["Son las personas,", "animales u objetos animados,", "que llevan a cabo", "o padecen las acciones."]
+      },
+      {
+        subject: "esp",
+        term: "Espacio",
+        chunks: ["Es el lugar donde", "se desarrollan los eventos", "de la narración"]
+      },
+      {
+        subject: "esp",
+        term: "Final o desenlace",
+        chunks: ["Donde se resuelven", "los conflictos", "y se cierra la historia."]
+      },
+      // Matemáticas
+      {
+        subject: "mat",
+        term: "Triángulo",
+        chunks: ["Tiene tres lados,", "tres vértices", "y sus ejes de simetría", "dependen de su tipo"]
+      },
+      {
+        subject: "mat",
+        term: "cuadrado",
+        chunks: ["Tiene cuatro lados iguales,", "cuatro vértices", "y cuatro ejes de simetría."]
+      },
+      {
+        subject: "mat",
+        term: "Rectángulo",
+        chunks: ["Tiene dos pares", "de lados iguales,", "cuatro vértices", "y dos ejes de simetría."]
+      },
+      {
+        subject: "mat",
+        term: "Círculo",
+        chunks: ["se forma con", "una línea curva", "y no tiene vértices"]
+      },
+      {
+        subject: "mat",
+        term: "Capacidad",
+        chunks: ["el espacio dentro", "de un recipiente", "que podemos llenar de líquidos,", "como agua, jugo o leche."]
+      },
+      // Ciencias
+      {
+        subject: "cie",
+        term: "Animales vertebrados",
+        chunks: ["Tienen un esqueleto interno", "formado por huesos,", "con un eje llamado", "columna vertebral."]
+      },
+      {
+        subject: "cie",
+        term: "Animales invertebrados",
+        chunks: ["Los animales", "carecen de", "esqueleto interno."]
+      },
+      {
+        subject: "cie",
+        term: "Articulaciones",
+        chunks: ["Es donde se unen", "dos o más", "huesos"]
+      },
+      {
+        subject: "cie",
+        term: "¿Qué es la solubilidad?",
+        chunks: ["Es la capacidad", "de un material", "para disolverse", "en un líquido."]
+      },
+      {
+        subject: "cie",
+        term: "¿Qué es un disolvente?",
+        chunks: ["El líquido donde", "se disuelve", "el soluto."]
+      },
+      {
+        subject: "cie",
+        term: "¿Cuáles son las 3 formas del agua?",
+        chunks: ["Vapor,", "hielo", "y líquido."]
+      },
+      // Formación Cívica y Ética
+      {
+        subject: "fce",
+        term: "¿Qué es una necesidad básica?",
+        chunks: ["todas las cosas", "que necesitamos para", "sobrevivir", "y desarrollarnos."]
+      },
+      {
+        subject: "fce",
+        term: "¿Que es una desigualdad?",
+        chunks: ["Se produce cuando", "el acceso a oportunidades,", "recursos y servicios", "no son los mismos", "para todas las personas."]
+      },
+      {
+        subject: "fce",
+        term: "¿Qué son las especies endémicas?",
+        chunks: ["Son especies que", "solo existen en ese lugar", "y en ninguna", "otra parte del mundo"]
+      },
+      {
+        subject: "fce",
+        term: "¿Qué es el patrimonio biocultural?",
+        chunks: ["son los conocimientos,", "cultura y prácticas", "de los pueblos originarios"]
+      },
+      {
+        subject: "fce",
+        term: "¿Qué son las chinampas?",
+        chunks: ["Son sistemas artificiales", "de cultivo que inventaron", "nuestros antepasados en lugares", "donde predominaba el agua."]
       }
     ];
 
-    let fillIdx = 0;
+    let builderPool = [];
 
-    function renderFill() {
-      const f = fillData[fillIdx];
-      document.getElementById('fillPrompt').innerHTML = f.text.replace("_______", "<span id='blankBox' style='border-bottom:2px solid #38bdf8; color:#38bdf8; padding:0 8px; font-weight:900;'>¿?</span>");
-      document.getElementById('fillFeedback').classList.add('hidden');
-      document.getElementById('fillNextBtn').classList.add('hidden');
+    function initBuilder() {
+      const activeData = currentSubject === 'all' 
+        ? BUILDER_ITEMS 
+        : BUILDER_ITEMS.filter(item => item.subject === currentSubject);
 
-      const bank = document.getElementById('fillWordBank');
-      bank.innerHTML = '';
-      [...f.opts].sort(() => Math.random() - 0.5).forEach(word => {
-        const btn = document.createElement('button');
-        btn.className = 'sub-btn';
-        btn.style.cssText = "flex:0 0 auto; padding:8px 14px; font-size:12px; font-weight:800; background:#0f172a; color:#f8fafc;";
-        btn.textContent = word;
-        btn.onclick = () => {
-          document.querySelectorAll('#fillWordBank button').forEach(b => b.style.pointerEvents = 'none');
-          const fb = document.getElementById('fillFeedback');
-          document.getElementById('blankBox').textContent = word;
-          if (word === f.ans) {
-            btn.style.borderColor = '#10b981';
-            btn.style.background = 'rgba(16,185,129,0.2)';
-            fb.className = 'feedback-box good';
-            fb.innerHTML = `🎯 <b>¡Preciso!</b> Es el término textual de la guía de estudio.`;
-          } else {
-            btn.style.borderColor = '#ef4444';
-            btn.style.background = 'rgba(239,68,68,0.2)';
-            fb.className = 'feedback-box bad';
-            fb.innerHTML = `❌ La respuesta correcta es <b>${f.ans}</b>.`;
-          }
-          fb.classList.remove('hidden');
-          document.getElementById('fillNextBtn').classList.remove('hidden');
-        };
-        bank.appendChild(btn);
+      builderPool = activeData.length > 0 ? [...activeData] : [...BUILDER_ITEMS];
+
+      // Evitar repetir inmediatamente el mismo ítem si hay más de 1
+      let nextItem;
+      if (builderPool.length > 1 && builderCurrentItem) {
+        const poolSinActual = builderPool.filter(i => i.term !== builderCurrentItem.term);
+        nextItem = poolSinActual.length > 0
+          ? poolSinActual[Math.floor(Math.random() * poolSinActual.length)]
+          : builderPool[Math.floor(Math.random() * builderPool.length)];
+      } else {
+        nextItem = builderPool[Math.floor(Math.random() * builderPool.length)];
+      }
+      builderCurrentItem = nextItem;
+      builderAnswerBlocks = [];
+      
+      builderAvailableBlocks = [...builderCurrentItem.chunks].sort(() => Math.random() - 0.5);
+
+      let icon = '📝 ';
+      if (builderCurrentItem.subject === 'mat') icon = '📐 ';
+      if (builderCurrentItem.subject === 'cie') icon = '🔬 ';
+      if (builderCurrentItem.subject === 'fce') icon = '🤝 ';
+
+      document.getElementById('builder-term').innerText = `${icon}${builderCurrentItem.term}`;
+      const fb = document.getElementById('builder-feedback');
+      fb.className = "hidden mt-4 p-4 rounded-2xl text-sm font-semibold";
+      fb.innerHTML = '';
+      
+      const checkBtn = document.getElementById('builder-check-btn');
+      if (checkBtn) checkBtn.disabled = false;
+
+      renderBuilder();
+    }
+
+    function renderBuilder() {
+      const dropzone = document.getElementById('builder-dropzone');
+      const wordbank = document.getElementById('builder-wordbank');
+
+      dropzone.innerHTML = '';
+      if (builderAnswerBlocks.length === 0) {
+        const placeholder = document.createElement('span');
+        placeholder.className = "text-xs text-amber-500/80 italic p-2 select-none";
+        placeholder.innerText = "Toca las palabras de abajo en el orden correcto...";
+        dropzone.appendChild(placeholder);
+      } else {
+        builderAnswerBlocks.forEach((chunk, i) => {
+          const chip = document.createElement('button');
+          chip.className = "px-3 py-2 bg-indigo-600 text-white font-bold rounded-xl text-xs md:text-sm shadow flex items-center gap-1.5 hover:bg-rose-600 transition press-effect";
+          chip.innerHTML = `<span>${chunk}</span> <i class="fa-solid fa-xmark text-xs opacity-70"></i>`;
+          chip.onclick = () => removeBlockFromAnswer(i);
+          dropzone.appendChild(chip);
+        });
+      }
+
+      wordbank.innerHTML = '';
+      builderAvailableBlocks.forEach((chunk, i) => {
+        const chip = document.createElement('button');
+        chip.className = "px-3 py-2 bg-white border-2 border-slate-300 text-slate-800 font-bold rounded-xl text-xs md:text-sm shadow-sm hover:border-indigo-500 hover:bg-indigo-50 transition press-effect";
+        chip.innerText = chunk;
+        chip.onclick = () => addBlockToAnswer(i);
+        wordbank.appendChild(chip);
       });
     }
 
-    function nextFill() {
-      fillIdx = (fillIdx + 1) % fillData.length;
-      renderFill();
+    function addBlockToAnswer(index) {
+      sound.playClick();
+      const item = builderAvailableBlocks.splice(index, 1)[0];
+      builderAnswerBlocks.push(item);
+      renderBuilder();
     }
 
-    // ARRANQUE AUTOMÁTICO
+    function removeBlockFromAnswer(index) {
+      sound.playClick();
+      const item = builderAnswerBlocks.splice(index, 1)[0];
+      builderAvailableBlocks.push(item);
+      renderBuilder();
+    }
+
+    function resetBuilderAnswer() {
+      sound.playClick();
+      builderAvailableBlocks = [...builderCurrentItem.chunks].sort(() => Math.random() - 0.5);
+      builderAnswerBlocks = [];
+      const fb = document.getElementById('builder-feedback');
+      fb.classList.add('hidden');
+      fb.innerHTML = '';
+      renderBuilder();
+    }
+
+    function skipBuilder() {
+      sound.playClick();
+      initBuilder();
+    }
+
+    function checkBuilderAnswer() {
+      const fb = document.getElementById('builder-feedback');
+      const constructed = builderAnswerBlocks.join(' ');
+      const target = builderCurrentItem.chunks.join(' ');
+
+      if (builderAnswerBlocks.length < builderCurrentItem.chunks.length) {
+        sound.playWrong();
+        fb.className = "mt-4 p-4 rounded-2xl bg-amber-100 border-2 border-amber-300 text-amber-900 text-xs font-bold block";
+        fb.innerHTML = `⚠️ ¡Faltan bloques! Debes usar todos los fragmentos para completar la frase.`;
+        return;
+      }
+
+      if (constructed === target) {
+        sound.playCorrect();
+        addStars(3);
+        triggerConfetti();
+        fb.className = "mt-4 p-4 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-900 text-xs font-bold block";
+        fb.innerHTML = `
+          <div class="flex items-center gap-2 mb-2 text-emerald-800 font-bold text-sm">
+            <i class="fa-solid fa-circle-check text-base"></i> ¡PERFECTO! La escribiste exactamente igual que la guía (+3 estrellas ⭐).
+          </div>
+          <div class="mt-3 text-right">
+            <button id="builder-next-btn" onclick="initBuilder()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md transition press-effect inline-flex items-center gap-1.5">
+              <span>Siguiente Frase</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        `;
+      } else {
+        sound.playWrong();
+        fb.className = "mt-4 p-4 rounded-2xl bg-rose-100 border-2 border-rose-300 text-rose-900 text-xs font-bold block";
+        fb.innerHTML = `❌ El orden no es exactamente igual. Intenta reacomodar las palabras para que sea idéntico al libro.`;
+      }
+    }
+
+    // --- 9. MODO: UNIR PAREJAS (MATCH GAME) ---
+    const matchState = {
+      cards: [],
+      selectedConcept: null,
+      selectedDef: null,
+      matchesFound: 0
+    };
+
+    function initMatchGame() {
+      const pool = getActiveDataset();
+      // Tomamos 4 elementos al azar del dataset activo
+      const sample = [...pool].sort(() => Math.random() - 0.5).slice(0, 4);
+      matchState.selectedConcept = null;
+      matchState.selectedDef = null;
+      matchState.matchesFound = 0;
+
+      const concepts = sample.map(item => ({ id: item.id, text: item.question }));
+      const defs = sample.map(item => ({ id: item.id, text: item.exactAnswer }));
+
+      // Desordenar cada lado
+      concepts.sort(() => Math.random() - 0.5);
+      defs.sort(() => Math.random() - 0.5);
+
+      const leftCol = document.getElementById('match-left-column');
+      const rightCol = document.getElementById('match-right-column');
+      leftCol.innerHTML = '';
+      rightCol.innerHTML = '';
+
+      concepts.forEach(c => {
+        const btn = document.createElement('button');
+        btn.id = `match-c-${c.id}`;
+        btn.className = "w-full p-3.5 rounded-2xl bg-white border-2 border-slate-200 text-left text-xs md:text-sm font-bold text-slate-800 shadow-sm hover:border-indigo-300 transition press-effect";
+        btn.innerText = c.text;
+        btn.onclick = () => selectMatchItem('concept', c.id, btn);
+        leftCol.appendChild(btn);
+      });
+
+      defs.forEach(d => {
+        const btn = document.createElement('button');
+        btn.id = `match-d-${d.id}`;
+        btn.className = "w-full p-3.5 rounded-2xl bg-white border-2 border-slate-200 text-left text-xs md:text-sm font-semibold text-slate-700 shadow-sm hover:border-emerald-300 transition press-effect";
+        btn.innerText = d.text;
+        btn.onclick = () => selectMatchItem('def', d.id, btn);
+        rightCol.appendChild(btn);
+      });
+    }
+
+    function selectMatchItem(type, id, element) {
+      sound.playClick();
+
+      if (type === 'concept') {
+        if (matchState.selectedConcept) {
+          matchState.selectedConcept.el.classList.remove('border-indigo-600', 'bg-indigo-50', 'ring-2', 'ring-indigo-300');
+        }
+        matchState.selectedConcept = { id, el: element };
+        element.classList.add('border-indigo-600', 'bg-indigo-50', 'ring-2', 'ring-indigo-300');
+      } else {
+        if (matchState.selectedDef) {
+          matchState.selectedDef.el.classList.remove('border-emerald-600', 'bg-emerald-50', 'ring-2', 'ring-emerald-300');
+        }
+        matchState.selectedDef = { id, el: element };
+        element.classList.add('border-emerald-600', 'bg-emerald-50', 'ring-2', 'ring-emerald-300');
+      }
+
+      // Si ambos están seleccionados, verificamos
+      if (matchState.selectedConcept && matchState.selectedDef) {
+        if (matchState.selectedConcept.id === matchState.selectedDef.id) {
+          // ¡Pareja correcta!
+          sound.playCorrect();
+          addStars(2);
+
+          const cEl = matchState.selectedConcept.el;
+          const dEl = matchState.selectedDef.el;
+
+          cEl.className = "w-full p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-400 text-emerald-900 font-bold text-xs md:text-sm opacity-90 cursor-default";
+          dEl.className = "w-full p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-400 text-emerald-900 font-semibold text-xs md:text-sm opacity-90 cursor-default";
+          cEl.disabled = true;
+          dEl.disabled = true;
+
+          cEl.innerHTML += ` <i class="fa-solid fa-check text-emerald-600 ml-1"></i>`;
+          dEl.innerHTML += ` <i class="fa-solid fa-check text-emerald-600 ml-1"></i>`;
+
+          matchState.matchesFound++;
+          matchState.selectedConcept = null;
+          matchState.selectedDef = null;
+
+          if (matchState.matchesFound === 4) {
+            triggerConfetti();
+            setTimeout(() => {
+              showModal("¡Conexión Perfecta! 🎯", "Uniste todas las respuestas exactas con sus preguntas.");
+            }, 500);
+          }
+        } else {
+          // Pareja incorrecta
+          sound.playWrong();
+          const cEl = matchState.selectedConcept.el;
+          const dEl = matchState.selectedDef.el;
+
+          cEl.classList.add('border-rose-400', 'bg-rose-50');
+          dEl.classList.add('border-rose-400', 'bg-rose-50');
+
+          setTimeout(() => {
+            cEl.classList.remove('border-indigo-600', 'bg-indigo-50', 'ring-2', 'ring-indigo-300', 'border-rose-400', 'bg-rose-50');
+            dEl.classList.remove('border-emerald-600', 'bg-emerald-50', 'ring-2', 'ring-emerald-300', 'border-rose-400', 'bg-rose-50');
+            matchState.selectedConcept = null;
+            matchState.selectedDef = null;
+          }, 600);
+        }
+      }
+    }
+
+    // Utilidad de aviso flotante
+    function alertSimple(msg) {
+      const box = document.createElement('div');
+      box.className = "fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs px-4 py-2 rounded-full shadow-lg z-50 animate-bounce";
+      box.innerText = msg;
+      document.body.appendChild(box);
+      setTimeout(() => box.remove(), 2000);
+    }
+
+    // Inicialización al cargar la ventana
     window.onload = function() {
-      renderQuestion();
-      renderCard();
+      initFlashcards();
+      renderMachete();
     };
   </script>
 </body>
