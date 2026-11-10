@@ -160,15 +160,7 @@
       <!-- Buscador y Filtro de Temas -->
       <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
         <div class="flex flex-wrap gap-1.5" id="machete-filter-buttons">
-          <button onclick="filterMachete('all')" id="mf-all" class="mf-btn px-3 py-1.5 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-sm">Todos</button>
-          <button onclick="filterMachete('pub')" id="mf-pub" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">1. Anuncios y Etiquetas</button>
-          <button onclick="filterMachete('nar')" id="mf-nar" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">2. Textos Narrativos</button>
-          <button onclick="filterMachete('mat_geom')" id="mf-mat_geom" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">3. Geometría y Cuerpos</button>
-          <button onclick="filterMachete('mat_med')" id="mf-mat_med" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">4. Medidas, Peso y Capacidad</button>
-          <button onclick="filterMachete('cie_bio')" id="mf-cie_bio" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">5. Vertebrados y Locomotor</button>
-          <button onclick="filterMachete('cie_qui')" id="mf-cie_qui" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">6. Mezclas y Agua</button>
-          <button onclick="filterMachete('fce_nec')" id="mf-fce_nec" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">7. Necesidades y Derechos</button>
-          <button onclick="filterMachete('fce_bio')" id="mf-fce_bio" class="mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50">8. Biodiversidad y Cultura</button>
+          <!-- Generado dinámicamente según la materia seleccionada -->
         </div>
         <!-- Buscador en tiempo real -->
         <div class="relative max-w-xs w-full">
@@ -1475,6 +1467,60 @@
     // --- FILTRADO POR MATERIA GLOBAL ---
     let currentSubject = 'esp'; // 'all', 'esp', 'mat', 'cie', 'fce'
 
+    const SUBJECT_CATEGORIES = {
+      all: [
+        { id: 'all', label: 'Todos' },
+        { id: 'pub', label: '1. Anuncios y Etiquetas' },
+        { id: 'nar', label: '2. Textos Narrativos' },
+        { id: 'mat_geom', label: '3. Geometría y Cuerpos' },
+        { id: 'mat_med', label: '4. Medidas, Peso y Capacidad' },
+        { id: 'cie_bio', label: '5. Vertebrados y Locomotor' },
+        { id: 'cie_qui', label: '6. Mezclas y Agua' },
+        { id: 'fce_nec', label: '7. Necesidades y Derechos' },
+        { id: 'fce_bio', label: '8. Biodiversidad y Cultura' }
+      ],
+      esp: [
+        { id: 'all', label: 'Todo Español' },
+        { id: 'pub', label: '1. Anuncios y Etiquetas' },
+        { id: 'nar', label: '2. Textos Narrativos' }
+      ],
+      mat: [
+        { id: 'all', label: 'Toda Matemáticas' },
+        { id: 'mat_geom', label: '3. Geometría y Cuerpos' },
+        { id: 'mat_med', label: '4. Medidas, Peso y Capacidad' }
+      ],
+      cie: [
+        { id: 'all', label: 'Toda Ciencias' },
+        { id: 'cie_bio', label: '5. Vertebrados y Locomotor' },
+        { id: 'cie_qui', label: '6. Mezclas y Agua' }
+      ],
+      fce: [
+        { id: 'all', label: 'Toda Formación Cívica' },
+        { id: 'fce_nec', label: '7. Necesidades y Derechos' },
+        { id: 'fce_bio', label: '8. Biodiversidad y Cultura' }
+      ]
+    };
+
+    function renderCategoryFilterButtons() {
+      const container = document.getElementById('machete-filter-buttons');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const cats = SUBJECT_CATEGORIES[currentSubject] || SUBJECT_CATEGORIES.all;
+
+      cats.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.id = `mf-${cat.id}`;
+        btn.onclick = () => filterMachete(cat.id);
+        const isActive = macheteFilter === cat.id;
+        btn.className = isActive
+          ? "mf-btn px-3 py-1.5 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-sm transition"
+          : "mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50 transition";
+        btn.innerText = cat.label;
+        container.appendChild(btn);
+      });
+    }
+
     function setSubject(subj) {
       sound.playClick();
       currentSubject = subj;
@@ -1490,6 +1536,7 @@
       });
 
       macheteFilter = 'all';
+      renderCategoryFilterButtons();
       renderMachete();
       initFlashcards();
       initQuiz();
@@ -1836,16 +1883,7 @@
     function filterMachete(cat) {
       sound.playClick();
       macheteFilter = cat;
-      const cats = ['all', 'pub', 'nar', 'mat_geom', 'mat_med', 'cie_bio', 'cie_qui', 'fce_nec', 'fce_bio'];
-      cats.forEach(c => {
-        const b = document.getElementById(`mf-${c}`);
-        if (!b) return;
-        if (c === cat) {
-          b.className = "mf-btn px-3 py-1.5 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-sm";
-        } else {
-          b.className = "mf-btn px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs hover:bg-indigo-50";
-        }
-      });
+      renderCategoryFilterButtons();
       renderMachete();
     }
 
@@ -2576,6 +2614,7 @@
 
     // Inicialización al cargar la ventana
     window.onload = function() {
+      renderCategoryFilterButtons();
       initFlashcards();
       renderMachete();
     };
